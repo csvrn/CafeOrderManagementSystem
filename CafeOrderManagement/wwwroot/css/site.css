@@ -30,15 +30,53 @@ body {
     display: flex;
     flex-direction: row;
     background-color: #F5F5F6;
+
+}
+#main-page-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+.button {
+    width: 200px;
+    height: 50px;
+    background-color: #87B6A1;
+    border: 2px solid;
+    border-color: #87B6A1;
+    border-radius: 10px;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+}
+.button i {
+   margin-right:10px;
+}
+.button:hover{
+    cursor:pointer;
 }
 #page-title{
     margin:40px;
 }
+#navbar {
+    height: 100vh;
+    position: fixed;
+    top: 0;    
+    left:0;
+    overflow-y:auto;
+    background-color: white;
+}
 nav {
     width: 250px;
-    background-color: white;
     padding: 1em;
-    height: 100%;
+}
+#main-container{
+    display:flex;
+    flex-direction:column;
+    flex-grow:1;
+    margin-left:300px;
+    height:min-content;
 }
 
 #logo {
@@ -75,19 +113,130 @@ nav {
     text-decoration: none;
     color: black;
 }
-
-#main-container {
-    flex-grow: 1;
-    padding: 1em;
+.edit-modal {
+    background-color: white;
+    height: min-content;
+    max-height: 550px;
+    width: 800px;
+    margin-top: 50px;
+    margin-bottom: 100px;
+    margin-right: 200px;
+    margin-left: 50px;
+    align-self: center;
+    border: 2px solid;
+    border-color: lightgray;
+    border-radius: 10px;
+    padding: 40px 30px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.edit-modal-inner {
+    background-color: white;
+    height: min-content;
+    align-self: center;
+    margin: 30px 30px;
+}
+.edit-modal.hidden {
+   display:none;
 }
 
-#order-container-list {
-    margin-right:200px;
-    margin-left:50px;
+.edit-modal-title{
+    margin-top:0;
+    margin-left:10px;
+}
+.select-container{
+    display:flex;
+    flex-direction:row;
+    margin-bottom:10px;
+}
+
+.select-box {
+    align-self:center;
+    
+}
+
+.select-box *{
+    font-size:20px;
+    align-self:center;
+    padding:5px 10px;
+    border:2px solid;
+    border-color:lightgray;
+    border-radius:5px;
+}
+
+.quantity-input {
+    font-size:20px;
+    align-self:center;
+    padding:5px 10px;
+    border:2px solid;
+    border-color:lightgray;
+    border-radius:5px;
+}
+.order-button {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 40px;
+}
+.order-detail-button {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between !important;
+    margin-top: 40px;
+}
+.order-detail-add-button {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 40px;
+}
+.add-order-detail-icon {
+    display: flex;
+    justify-content: flex-end !important;
+    margin-right:20px;
+}
+
+.order-container-list {
+    height: 100%;
+    margin-right: 200px;
+    margin-left: 50px;
     display: grid;
-    grid-row-gap:50px;
+    grid-row-gap: 50px;
     grid-template-columns: 1fr 1fr 1fr;
+    height:min-content;
+    margin-bottom:100px;
 }
+.loader-container{
+    margin-right:270px;
+    height:100%;
+    display:flex;
+    justify-content:center;
+}
+
+.loader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+    display:flex;
+    margin-top:25vh;
+}
+.loader.hidden,.loader-container.hidden{
+    display:none;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
 #order-container {
     background-color: white;
     display: flex;
@@ -97,11 +246,26 @@ nav {
     border-color: lightgray;
     border-radius: 10px;
     width: 360px;
-    height: 400px; 
-    overflow-y: auto; 
-    overflow-x: hidden; 
+    height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    justify-content: space-between !important;
 }
-#order{
+
+.order-container-header{
+    display:flex;
+    flex-direction:row;
+    justify-content:space-between;
+    margin-right:20px;
+    margin-top:10px;
+
+}
+
+#order-upper-container{
+    display:flex;
+    flex-direction:column;
+}
+.order{
     display:flex;
     flex-direction:row;
     margin:20px 20px 0px 0px;
@@ -117,6 +281,11 @@ nav {
     border-bottom:2px solid;
     border-bottom-color:lightgray;
     margin-left:10px;
+}
+.order-detail-edit-container{
+    display:flex;
+    flex-direction:row;
+    justify-content:space-between !important;
 }
 .order-edit-container {
     display: flex;
@@ -135,4 +304,9 @@ nav {
 #price-quantity{
     display:flex;
     justify-content:space-between;
+}
+
+
+.hidden {
+    display: none;
 }

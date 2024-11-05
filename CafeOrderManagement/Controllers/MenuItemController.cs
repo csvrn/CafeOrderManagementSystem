@@ -14,14 +14,6 @@ namespace CafeOrderManagement.Controllers
 		{
 			_menuItemRepo = menuItemRepo;
 		}
-		//public IActionResult Index()
-		//{
-		//	List<MenuItem> menuItems = _menuItemRepo.GetAll(includeProperties: "Category").ToList();
-		//	return View(menuItems);
-		//}
-
-
-
 
 		#region API CALLS
 		[HttpGet]

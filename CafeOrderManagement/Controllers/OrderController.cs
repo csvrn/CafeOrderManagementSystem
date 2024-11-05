@@ -41,7 +41,7 @@ namespace CafeOrderManagement.Controllers
 				{
 					_orderRepo.Add(order);
 					_orderRepo.Save();
-					return Ok(new { success = true, message = "Order created successfully." });
+					return Ok(new { success = true, message = "Order created successfully.", orderId=order.Id });
 				}
 				catch (Exception exception)
 				{

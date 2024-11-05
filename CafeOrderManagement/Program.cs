@@ -15,7 +15,21 @@ builder.Services.AddScoped<ITableRepository, TableRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+
+
+builder.Services.AddCors(options =>
+{
+	options.AddPolicy("AllowAnyOriginWithCredentials",
+		policy => policy
+			.SetIsOriginAllowed(origin => true) 
+			.AllowCredentials()                
+			.AllowAnyMethod()
+			.AllowAnyHeader()
+	);
+});
+
 var app = builder.Build();
+app.UseCors("AllowAnyOriginWithCredentials");
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -38,6 +52,7 @@ app.UseAuthorization();
 //app.MapControllerRoute(
 //	name: "default",
 //	pattern: "{controller=Home}/{action=Index}/{id?}");
+
 app.MapControllers();
 
 app.Run();

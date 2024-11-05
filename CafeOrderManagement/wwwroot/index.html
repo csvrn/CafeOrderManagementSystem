@@ -4,100 +4,126 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cafe Order Management</title>
-    <link rel="stylesheet" href="css/site.css">
+    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="css/site.css" asp-append-version="true">
 
 </head>
 <body>
     <div id="navbar"></div>
 
     <div id="main-container">
-        <h2 id="page-title">Order List</h2>
-        <div id="order-container-list">
-            <div id="order-container">
-                <h2 style="font-size:18px; margin-top:10px; margin-left:10px; margin-bottom:25px">Order #1 - Table 1</h2>
-                <div id="order">
-                    <img id="order-image" src="images/food.png" />
-                    <div id="order-detail">
-                        <div>Order Name</div>
-                        <div>Category Name</div>
-                        <div id="price-quantity">
-                            <div>Price</div>
-                            <div>Quantity</div>
+        <div id="main-page-header" style="margin-right:270px">
+            <h2 id="page-title">Order List</h2>
+            <button class="button" onclick="openModal()"><i class="bi bi-plus-square"></i>New Order</button>
+        </div>
+        <div class="edit-modal hidden">
+            <div class="edit-modal-inner">
+                <h1 class="edit-modal-title" style="margin-top:0;">Create Order</h1>
+                <form id="order-upper-container">
+                    <div class="select-container">
+                        <h4 style=" margin:10px 10px">Choose A Table:</h4>
+                        <div id="table-select" class="select-box">
                         </div>
                     </div>
+                    <div id="add-menu-item-container" class="hidden">
 
-                </div>
-                <div id="order">
-                    <img id="order-image" src="images/food.png" />
-                    <div id="order-detail">
-                        <div>Order Name</div>
-                        <div>Category Name</div>
-                        <div id="price-quantity">
-                            <div>Price</div>
-                            <div>Quantity</div>
+                        <h3 class="edit-modal-title" style="margin-top:20px;">Add Menu Item</h3>
+                        <div class="order" style="margin-top:0px">
+                            <div id="order-detail">
+                                <div class="select-container">
+                                    <h4 style=" margin:10px 10px 10px 0px">Choose A Menu Item:</h4>
+                                    <div id="menu-item-select" class="select-box menu-item-select">
+                                        <!--<select>
+                            <option selected disabled>
+                                Choose A Menu
+                            </option>
+                            <option value="menuItem.id">Mac and cheese</option>
+                            <option value="menuItem.id">Burger</option>
+                        </select>-->
+                                    </div>
+                                </div>
+                                <div id="menu-item-quantity" class="select-container hidden">
+                                    <h4 style=" margin:10px 10px 10px 0px">Choose Quantity:</h4>
+                                    <input name="quantity" type="number" class="quantity-input" min="1" max="50" value="1" />
+                                </div>
+                                <!--<div id="menu-item-price" class="select-container hidden">
+                    <h4 style=" margin:10px 10px 10px 0px">Price:</h4>
+                    <input name="price" type="number" class="quantity-input" value="3.98" disabled />
+                </div>-->
+
+                            </div>
                         </div>
                     </div>
+                    <div id="edit-menu-item-container"></div>
 
-                </div>
-               
-                <div class="order-edit-container">
-                    <div>X2 items</div>
-                    <div style="font-size:36px">
-                        <i style="color: #DB79A9;" class="bi bi-x-square"></i>
-                        <i style="color: #87B6A1;" class="bi bi-check-square"></i>
-                    </div>
-                </div>
+                    <!--<div class="order">
+        <img id="order-image" src="images/food.png" />
+        <div id="order-detail">
+            <div>Order Name</div>
+            <div>Category Name</div>
+            <div id="price-quantity">
+                <div>Price</div>
+                <div>Quantity</div>
             </div>
-            <div id="order-container">
-                <h2 style="font-size:18px; margin-top:10px; margin-left:10px; margin-bottom:25px">Order #1 - Table 1</h2>
-                <div id="order">
-                    <img id="order-image" src="images/food.png" />
-                    <div id="order-detail">
-                        <div>Order Name</div>
-                        <div>Category Name</div>
-                        <div id="price-quantity">
-                            <div>Price</div>
-                            <div>Quantity</div>
-                        </div>
+        </div>
+
+    </div>-->
+                    <!--<div class="order-edit-container">
+        <div></div>
+        <div style="font-size:36px">
+            <i style="color: #DB79A9;" class="bi bi-x-square"></i>
+            <i style="color: #87B6A1;" class="bi bi-check-square"></i>
+        </div>
+    </div>-->
+                    <div id="order-detail-list">
+
+                    </div>
+                    <div class="order-button">
+                        <button class="button cancel" type="button" onclick="cancelOrder()"><i class="bi bi-x-square"></i>Cancel</button>
+                        <button id="modal-submit-button" class="button" type="submit"><i class="bi bi-plus-square"></i>Create Order</button>
+                    </div>
+                    <div class="order-detail-button hidden">
+                        <button class="button cancel" type="button" onclick="cancelOrderDetail()"><i class="bi bi-x-square"></i>Cancel</button>
+                        <button id="modal-submit-button" class="button" type="button" onclick="editOrderDetail()"><i class="bi bi-plus-square"></i>Edit Order Detail</button>
+                    </div>
+                    <div class="order-detail-add-button hidden">
+                        <button class="button cancel" type="button" onclick="cancelOrderDetail()"><i class="bi bi-x-square"></i>Cancel</button>
+                        <button id="modal-submit-button" class="button" type="button" onclick="createOrderDetailOnEdit()"><i class="bi bi-plus-square"></i>Add Order Detail</button>
                     </div>
 
-                </div>
-                <div id="order">
-                    <img id="order-image" src="images/food.png" />
-                    <div id="order-detail">
-                        <div>Order Name</div>
-                        <div>Category Name</div>
-                        <div id="price-quantity">
-                            <div>Price</div>
-                            <div>Quantity</div>
-                        </div>
-                    </div>
 
-                </div>
-                <div id="order">
-                    <img id="order-image" src="images/food.png" />
-                    <div id="order-detail">
-                        <div>Order Name</div>
-                        <div>Category Name</div>
-                        <div id="price-quantity">
-                            <div>Price</div>
-                            <div>Quantity</div>
-                        </div>
-                    </div>
+                </form>
 
-                </div>
-                <div class="order-edit-container">
-                    <div>X2 items</div>
-                    <div style="font-size:36px">
-                        <i style="color: #DB79A9;" class="bi bi-x-square"></i>
-                        <i style="color: #87B6A1;" class="bi bi-check-square"></i>
-                    </div>
-                </div>
             </div>
+        </div>
+        <div id="loader-container" class="loader-container hidden">
+            <div id="loader" class="loader"></div>
+        </div>
+        <div class="order-container-list">
             <div id="order-container">
-                <h2 style="font-size:18px; margin-top:10px; margin-left:10px; margin-bottom:25px">Order #1 - Table 1</h2>
-                <div id="order">
+                <div class="order-container-header">
+                    <h2 style="font-size:18px; margin-top:10px; margin-left:10px; margin-bottom:25px">Order #1 - Table 1</h2>
+                    <i style="font-size:36px;color:gray" class="bi bi-pencil-square" onclick="openEditOrderModel(23)"></i>
+                </div>
+                <div class="order">
+                    <img id="order-image" src="images/food.png" />
+                    <div id="order-detail">
+                        <div class="order-detail-edit-container">
+                            <div>
+                                <div>Order Name</div>
+                                <div>Category Name</div>
+                            </div>
+                            <i style="font-size:24px;color:gray" class="bi bi-pencil-square" onclick="openEditOrderModel(23)"></i>
+                        </div>
+                        <div id="price-quantity">
+                            <div>Price</div>
+                            <div>Quantity</div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="order">
                     <img id="order-image" src="images/food.png" />
                     <div id="order-detail">
                         <div>Order Name</div>
@@ -109,157 +135,7 @@
                     </div>
 
                 </div>
-                <div id="order">
-                    <img id="order-image" src="images/food.png" />
-                    <div id="order-detail">
-                        <div>Order Name</div>
-                        <div>Category Name</div>
-                        <div id="price-quantity">
-                            <div>Price</div>
-                            <div>Quantity</div>
-                        </div>
-                    </div>
-
-                </div>
-                <div id="order">
-                    <img id="order-image" src="images/food.png" />
-                    <div id="order-detail">
-                        <div>Order Name</div>
-                        <div>Category Name</div>
-                        <div id="price-quantity">
-                            <div>Price</div>
-                            <div>Quantity</div>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="order-edit-container">
-                    <div>X2 items</div>
-                    <div style="font-size:36px">
-                        <i style="color: #DB79A9;" class="bi bi-x-square"></i>
-                        <i style="color: #87B6A1;" class="bi bi-check-square"></i>
-                    </div>
-                </div>
-            </div>
-            <div id="order-container">
-                <h2 style="font-size:18px; margin-top:10px; margin-left:10px; margin-bottom:25px">Order #1 - Table 1</h2>
-                <div id="order">
-                    <img id="order-image" src="images/food.png" />
-                    <div id="order-detail">
-                        <div>Order Name</div>
-                        <div>Category Name</div>
-                        <div id="price-quantity">
-                            <div>Price</div>
-                            <div>Quantity</div>
-                        </div>
-                    </div>
-
-                </div>
-                <div id="order">
-                    <img id="order-image" src="images/food.png" />
-                    <div id="order-detail">
-                        <div>Order Name</div>
-                        <div>Category Name</div>
-                        <div id="price-quantity">
-                            <div>Price</div>
-                            <div>Quantity</div>
-                        </div>
-                    </div>
-
-                </div>
-                <div id="order">
-                    <img id="order-image" src="images/food.png" />
-                    <div id="order-detail">
-                        <div>Order Name</div>
-                        <div>Category Name</div>
-                        <div id="price-quantity">
-                            <div>Price</div>
-                            <div>Quantity</div>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="order-edit-container">
-                    <div>X2 items</div>
-                    <div style="font-size:36px">
-                        <i style="color: #DB79A9;" class="bi bi-x-square"></i>
-                        <i style="color: #87B6A1;" class="bi bi-check-square"></i>
-                    </div>
-                </div>
-            </div>
-            <div id="order-container">
-                <h2 style="font-size:18px; margin-top:10px; margin-left:10px; margin-bottom:25px">Order #1 - Table 1</h2>
-                <div id="order">
-                    <img id="order-image" src="images/food.png" />
-                    <div id="order-detail">
-                        <div>Order Name</div>
-                        <div>Category Name</div>
-                        <div id="price-quantity">
-                            <div>Price</div>
-                            <div>Quantity</div>
-                        </div>
-                    </div>
-
-                </div>
-                <div id="order">
-                    <img id="order-image" src="images/food.png" />
-                    <div id="order-detail">
-                        <div>Order Name</div>
-                        <div>Category Name</div>
-                        <div id="price-quantity">
-                            <div>Price</div>
-                            <div>Quantity</div>
-                        </div>
-                    </div>
-
-                </div>
-                <div id="order">
-                    <img id="order-image" src="images/food.png" />
-                    <div id="order-detail">
-                        <div>Order Name</div>
-                        <div>Category Name</div>
-                        <div id="price-quantity">
-                            <div>Price</div>
-                            <div>Quantity</div>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="order-edit-container">
-                    <div>X2 items</div>
-                    <div style="font-size:36px">
-                        <i style="color: #DB79A9;" class="bi bi-x-square"></i>
-                        <i style="color: #87B6A1;" class="bi bi-check-square"></i>
-                    </div>
-                </div>
-            </div>
-            <div id="order-container">
-                <h2 style="font-size:18px; margin-top:10px; margin-left:10px; margin-bottom:25px">Order #1 - Table 1</h2>
-                <div id="order">
-                    <img id="order-image" src="images/food.png" />
-                    <div id="order-detail">
-                        <div>Order Name</div>
-                        <div>Category Name</div>
-                        <div id="price-quantity">
-                            <div>Price</div>
-                            <div>Quantity</div>
-                        </div>
-                    </div>
-
-                </div>
-                <div id="order">
-                    <img id="order-image" src="images/food.png" />
-                    <div id="order-detail">
-                        <div>Order Name</div>
-                        <div>Category Name</div>
-                        <div id="price-quantity">
-                            <div>Price</div>
-                            <div>Quantity</div>
-                        </div>
-                    </div>
-
-                </div>
-                <div id="order">
+                <div class="order">
                     <img id="order-image" src="images/food.png" />
                     <div id="order-detail">
                         <div>Order Name</div>
@@ -282,6 +158,7 @@
         </div>
     </div>
     <script src="js/app.js"></script>
+    <script src="js/order.js"></script>
     <script src="js/navbarLoader.js"></script>
 </body>
 </html>

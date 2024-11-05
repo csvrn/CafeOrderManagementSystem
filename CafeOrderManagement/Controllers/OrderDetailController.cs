@@ -1,4 +1,5 @@
-﻿using CafeOrderManagement.DataAccess.Repository.IRepository;
+﻿using CafeOrderManagement.DataAccess.Repository;
+using CafeOrderManagement.DataAccess.Repository.IRepository;
 using CafeOrderManagement.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,12 +12,24 @@ namespace CafeOrderManagement.Controllers
 		private readonly IOrderDetailRepository _orderDetailRepo;
         public OrderDetailController(IOrderDetailRepository orderDetailRepo)
         {
-			_orderDetailRepo = orderDetailRepo;   
+			_orderDetailRepo = orderDetailRepo;
         }
 		[HttpGet]
 		public IActionResult GetAll()
 		{
 			List<OrderDetail> orderDetail =_orderDetailRepo.GetAll(includeProperties:"Order,MenuItem").ToList();
+			return Ok(orderDetail);
+		}
+		[HttpGet("{orderId:int}")]
+		public IActionResult GetAllByOrder(int orderId)
+		{
+			List<OrderDetail> orderDetail = _orderDetailRepo.GetAll(u=>u.OrderId==orderId,includeProperties: "Order,MenuItem").ToList();
+			return Ok(orderDetail);
+		}
+		[HttpGet]
+		public IActionResult GetAllNested()
+		{
+			List<OrderDetail> orderDetail = _orderDetailRepo.GetAllNested().ToList();
 			return Ok(orderDetail);
 		}
 		[HttpGet("{id:int}")]
@@ -25,6 +38,19 @@ namespace CafeOrderManagement.Controllers
 			if (id != 0)
 			{
 				OrderDetail orderDetail = _orderDetailRepo.Get(u => u.Id == id, includeProperties: "Order,MenuItem");
+				return Ok(orderDetail);
+			}
+			else
+			{
+				return NotFound();
+			}
+		}
+		[HttpGet("{id:int}")]
+		public IActionResult GetNested(int id)
+		{
+			if (id != 0)
+			{
+				OrderDetail orderDetail = _orderDetailRepo.GetNested(id);
 				return Ok(orderDetail);
 			}
 			else
@@ -41,7 +67,7 @@ namespace CafeOrderManagement.Controllers
 				{
 					_orderDetailRepo.Add(orderDetail);
 					_orderDetailRepo.Save();
-					return Ok(new { success = true, message = "Order detail created successfully." });
+					return Ok(new { success = true, message = "Order detail created successfully." ,orderDetailId=orderDetail.Id});
 				}
 				catch (Exception exception)
 				{

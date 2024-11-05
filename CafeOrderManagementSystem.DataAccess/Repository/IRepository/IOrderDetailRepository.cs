@@ -9,6 +9,8 @@ namespace CafeOrderManagement.DataAccess.Repository.IRepository
 {
 	public interface IOrderDetailRepository:IRepository<OrderDetail>
 	{
+		IEnumerable<OrderDetail> GetAllNested();
+		OrderDetail GetNested(int id);
 		void Update(OrderDetail orderDetail);
 	}
 }
