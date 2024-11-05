@@ -125,13 +125,14 @@ async function loadOrderContent(orderId) {
 
             const orderElement = document.createElement("div");
             orderElement.classList.add("order");
+            console.log("burası: ", orderDetail.menuItem.category.name);
             orderElement.innerHTML = `
                         <img id="order-image" src="images/food.png" />
                         <div id="order-detail">
                             <div class="order-detail-edit-container">
                                 <div>
                                     <div>${orderDetail.menuItem.name}</div>
-                                    <div>${orderDetail.menuItem.categoryId}</div>
+                                    <div>${orderDetail.menuItem.category.name}</div>
                                 </div>
                                 <i style="font-size:24px;color:gray" class="bi bi-pencil-square" onclick="openEditOrderDetailModel(${orderDetail.id})"></i>  
                             </div> 
@@ -197,9 +198,19 @@ async function createOrderDetailOnEdit() {
 
     const orderDetailId = await postOrderDetail(data);
     console.log(orderDetailId);
-    orderDict[orderEditing].push({ ...data, id: orderDetailId ,menuItem:menu});
+    const olderDetail = orderDict[orderEditing].findIndex(detail => detail.menuItemId == menu.id);
+    if (olderDetail == -1) {
+        orderDict[orderEditing].push({ ...data, id: orderDetailId, menuItem: menu });
+
+    }
+    else {
+
+        let total = Number(orderDict[orderEditing][olderDetail].quantity) + Number(quantityInput.value);
+        orderDict[orderEditing][olderDetail] = { ...orderDict[orderEditing][olderDetail], quantity: total }
+    }
     loadOrderContent(orderEditing);
     cancelOrderDetail();
+    quantityInput.value = 1;
 
 
 
@@ -416,7 +427,7 @@ async function postOrder(data) {
         return responseData.orderId;
     } catch (error) {
         console.error("Error posting order:", error);
-        return null; 
+        return null;
     }
 }
 
@@ -435,13 +446,13 @@ async function postOrderDetail(data) {
         }
 
         const responseData = await response.json();
-        console.log(responseData);
+        console.log(responseData.orderDetailId);
 
-        
-        return responseData; 
+
+        return responseData.orderDetailId;
     } catch (error) {
         console.error("Error posting order detail:", error);
-        return null; 
+        return null;
     }
 }
 
@@ -525,8 +536,8 @@ function editOrder(event) {
     };
     updateOrder(data);
     cancelOrder();
-    window.location.reload();
     showLoader();
+    window.location.reload();
 }
 function openEditOrderModel(orderId, tableId) {
     orderEditing = orderId;
@@ -592,7 +603,7 @@ function cancelOrderDetail() {
     hideOrderDetailAddButtons();
     showSelectContainer();
     hideAddDetailContainer();
-    
+
     //const orderCreateForm = document.getElementById("order-upper-container");
     //orderCreateForm.reset();
 
@@ -619,7 +630,23 @@ async function editOrderDetail() {
 
     updateOrderDetail(data);
     const updatedDetail = orderDict[orderDetailEditing.orderId].findIndex(detail => detail.id == orderDetailEditing.id);
-    orderDict[orderDetailEditing.orderId][updatedDetail] = { ...orderDict[orderDetailEditing.orderId][updatedDetail], menuItemId: menu.id, menuItem: menu ,quantity:data.quantity};
+    const olderDetail = orderDict[orderEditing].findIndex(detail => detail.id != orderDetailEditing.id && detail.menuItemId == menu.id);
+
+
+
+    if (olderDetail == -1) {
+        orderDict[orderDetailEditing.orderId][updatedDetail] = { ...orderDict[orderDetailEditing.orderId][updatedDetail], menuItemId: menu.id, menuItem: menu, quantity: data.quantity };
+        console.log("a girişi");
+    }
+    else {
+        let total = Number(orderDict[orderEditing][olderDetail].quantity) + Number(quantityInput.value);
+        orderDict[orderEditing][olderDetail] = { ...orderDict[orderEditing][olderDetail], quantity: total }
+        orderDict[orderEditing].splice(updatedDetail,1);
+        console.log("b girişi");
+    }
+
+
+
     loadOrderContent(orderDetailEditing.orderId);
     cancelOrderDetail();
 
