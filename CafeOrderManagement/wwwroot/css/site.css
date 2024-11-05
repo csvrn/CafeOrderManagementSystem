@@ -272,6 +272,7 @@ nav {
 }
 #order-image{
     margin:10px;
+    width:130px;
 }
 #order-detail {
     width: 100%;
@@ -287,14 +288,20 @@ nav {
     flex-direction:row;
     justify-content:space-between !important;
 }
+.item-count-container {
+    padding: 10px 0px 0px 0px;
+    position: sticky;
+    bottom: 0;
+    background-color: white;
+}
 .order-edit-container {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    padding: 36px 20px 12px 20px;
+    padding: 10px 20px 12px 20px;
     align-items: flex-start;
-    position: sticky;
-    bottom: 0;
+/*    position: sticky;
+    bottom: 0;*/
     background-color:white;
 }
 .order-edit-container i {

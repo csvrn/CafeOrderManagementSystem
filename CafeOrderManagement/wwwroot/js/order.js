@@ -1,23 +1,49 @@
 ﻿let orderDetailEditing;
 let orderEditing;
-let orderDict;
+let orderDict = {};
+
+function showLoader() {
+    const loader = document.getElementById("loader");
+    loader.classList.remove("hidden");
+    const loaderContainer = document.getElementById("loader-container");
+    loaderContainer.classList.remove("hidden");
+    console.log("shows")
+}
+showLoader();
+function hideLoader() {
+    const loader = document.getElementById("loader");
+    loader.classList.add("hidden");
+    const loaderContainer = document.getElementById("loader-container");
+    loaderContainer.classList.add("hidden");
+    console.log("hides")
+
+}
 
 async function loadOrders() {
-    showLoader();
     try {
         const orderContainerList = document.getElementsByClassName('order-container-list')[0];
         orderContainerList.innerHTML = "";
         const response = await fetch('https://localhost:7238/OrderDetail/GetAllNested');
 
         const orderDetails = await response.json();
-        const detailsByOrders = Object.groupBy(orderDetails, ({ orderId }) => orderId);
-        orderDict = detailsByOrders;
-        console.log("grouped: ", detailsByOrders);
-        console.log("order 1:   ", detailsByOrders["1"][0]);
-        for (const [key, details] of Object.entries(detailsByOrders)) {
+        console.log(orderDetails);
+        let detailsByOrders = Object.groupBy(orderDetails, ({ orderId }) => orderId);
+        console.log(detailsByOrders);
+
+        Object.entries(detailsByOrders).forEach(([orderId, orderDetails]) => {
+            console.log(orderId);
+            console.log(orderDetails);
+            const orderStatus = orderDetails[0]?.order.status;
+            const tableId = orderDetails[0]?.order.tableId;
+            orderDict[orderId] = [orderStatus, orderDetails, tableId];
+        });
+
+        console.log("grouped: ", orderDict);
+        for (const [key, details] of Object.entries(orderDict)) {
             console.log("is that an order with 2 details: ", details);
             console.log("is that tea detail: ", details[1]);
-            const orderDetail = details[0];
+            //const orderStatus = details[0];
+            const orderDetail = details[1][0];
             console.log("val: ", orderDetail);
             const orderContainerElement = document.createElement("div");
             orderContainerElement.setAttribute("id", "order-container");
@@ -31,16 +57,19 @@ async function loadOrders() {
             const orderEditIcon = document.createElement("i");
             orderEditIcon.setAttribute("class", "bi bi-pencil-square");
             orderEditIcon.setAttribute("style", "font-size: 36px; color:gray");
-            orderEditIcon.onclick = function () {
-                openEditOrderModel(orderDetail.orderId, orderDetail.order.tableId);
-            }
             orderContainerHeader.appendChild(orderTitle);
-            orderContainerHeader.appendChild(orderEditIcon);
+            if (orderDetail.order.status == "Pending") {
+
+                orderEditIcon.onclick = function () {
+                    openEditOrderModel(orderDetail.orderId, orderDetail.order.tableId);
+                }
+                orderContainerHeader.appendChild(orderEditIcon);
+            }
             orderUpperContainerElement.appendChild(orderContainerHeader);
 
-            for (let i = 0; i < details.length; i++) {
+            for (let i = 0; i < details[1].length; i++) {
 
-                let item = details[i];
+                let item = details[1][i];
                 console.log("response: ", item);
 
                 const orderElement = document.createElement("div");
@@ -60,15 +89,42 @@ async function loadOrders() {
 
             }
             orderContainerElement.appendChild(orderUpperContainerElement);
+            const itemCountDiv = document.createElement("div");
+            itemCountDiv.classList.add("item-count-container");
+            itemCountDiv.innerHTML = `<div style="margin-left:10px">X${details[1].length} items</div>`;
+
+
             const editContainer = document.createElement("div");
             editContainer.classList.add("order-edit-container");
+            console.log("key: ", key);
             editContainer.innerHTML = `
-                <div>X${details.length} items</div>
+                
+               ${details[0] == "Pending" ?
+                    `
                 <div style="font-size:36px">
-                    <i style="color: #DB79A9;" class="bi bi-x-square"></i>
-                    <i style="color: #87B6A1;" class="bi bi-check-square"></i>
-                </div>`;
-            orderContainerElement.appendChild(editContainer);
+                    <i style='color: #DB79A9;' class='bi bi-trash' onclick="callDeleteOrder(${key})"></i>
+                 </div>
+                <div style="font-size:36px">
+                    <i style="color: #DB79A9;" class="bi bi-x-square" onclick="callUpdateOrderStatus(${key},'Rejected')"></i>
+                    <i style="color: #87B6A1;" class="bi bi-check-square" onclick="callUpdateOrderStatus(${key},'Completed')"></i>
+                </div>
+                ` : details[0] == "Completed" ? `
+                <div style="font-size:36px">
+                    <i style="color: #87B6A1;" class="bi bi-check-square">Completed</i>
+                </div>
+
+                `:
+                        `<div style="font-size:36px">
+                    <i style="color: #DB79A9;" class="bi bi-x-square" >Rejected</i>
+                </div>`
+                }`;
+
+
+
+
+
+            itemCountDiv.appendChild(editContainer);
+            orderContainerElement.appendChild(itemCountDiv);
             orderContainerList.appendChild(orderContainerElement);
 
         }
@@ -82,6 +138,9 @@ async function loadOrders() {
 
 
 }
+
+
+
 async function loadOrderContent(orderId) {
     const orderContainerList = document.getElementById('order-detail-list');
     orderContainerList.innerHTML = "";
@@ -100,7 +159,8 @@ async function loadOrderContent(orderId) {
             Add Menu Item
         </button>`;
 
-        for (const [key, orderDetail] of Object.entries(orderDetails)) {
+        for (const [key, details] of Object.entries(orderDetails[1])) {
+            const orderDetail = details;
             console.log("val: ", orderDetail);
 
             //const orderContainerElement = document.createElement("div");
@@ -134,13 +194,18 @@ async function loadOrderContent(orderId) {
                                     <div>${orderDetail.menuItem.name}</div>
                                     <div>${orderDetail.menuItem.category.name}</div>
                                 </div>
-                                <i style="font-size:24px;color:gray" class="bi bi-pencil-square" onclick="openEditOrderDetailModel(${orderDetail.id})"></i>  
+                                <i style="font-size:24px;color: #DB79A9;" class="bi bi-trash" onclick="callDeleteOrderDetail(${orderDetail.id})"></i>  
                             </div> 
                             <div id="price-quantity">
                                 <div>\$${orderDetail.price}</div>
                                 <div>Qty: ${orderDetail.quantity}</div>
                             </div>
+                            <div style="display:flex;justify-content:flex-end; margin-top:10px">
+                                <i style="font-size:24px;color:#87B6A1" class="bi bi-pencil-square" onclick="openEditOrderDetailModel(${orderDetail.id})"></i>  
+                            </div>
+
                         </div>
+
                       
             `;
             orderContainerList.appendChild(orderElement);
@@ -198,15 +263,15 @@ async function createOrderDetailOnEdit() {
 
     const orderDetailId = await postOrderDetail(data);
     console.log(orderDetailId);
-    const olderDetail = orderDict[orderEditing].findIndex(detail => detail.menuItemId == menu.id);
+    const olderDetail = orderDict[orderEditing][1].findIndex(detail => detail.menuItemId == menu.id);
     if (olderDetail == -1) {
-        orderDict[orderEditing].push({ ...data, id: orderDetailId, menuItem: menu });
+        orderDict[orderEditing][1].push({ ...data, id: orderDetailId, menuItem: menu });
 
     }
     else {
 
-        let total = Number(orderDict[orderEditing][olderDetail].quantity) + Number(quantityInput.value);
-        orderDict[orderEditing][olderDetail] = { ...orderDict[orderEditing][olderDetail], quantity: total }
+        let total = Number(orderDict[orderEditing][1][olderDetail].quantity) + Number(quantityInput.value);
+        orderDict[orderEditing][1][olderDetail] = { ...orderDict[orderEditing][1][olderDetail], quantity: total }
     }
     loadOrderContent(orderEditing);
     cancelOrderDetail();
@@ -314,21 +379,6 @@ function hideQuantity() {
     quantity.classList.add("hidden");
 }
 
-function showLoader() {
-    const loader = document.getElementById("loader");
-    loader.classList.remove("hidden");
-    const loaderContainer = document.getElementById("loader-container");
-    loaderContainer.classList.remove("hidden");
-    console.log("shows")
-}
-function hideLoader() {
-    const loader = document.getElementById("loader");
-    loader.classList.add("hidden");
-    const loaderContainer = document.getElementById("loader-container");
-    loaderContainer.classList.add("hidden");
-    console.log("hides")
-
-}
 function showOrderDetailList() {
     const detailList = document.getElementById("order-detail-list");
     detailList.classList.remove("hidden");
@@ -471,6 +521,7 @@ function updateOrder(data) {
         .catch(error => console.error(error));
     return data;
 }
+
 function updateOrderDetail(data) {
     const response = fetch('https://localhost:7238/OrderDetail/Update', {
         method: 'PUT',
@@ -522,7 +573,63 @@ async function createOrder(event) {
     window.location.reload();
     showLoader();
 }
+async function deleteOrder(orderId) {
 
+    try {
+        const response = await fetch(`https://localhost:7238/Order/Delete/${orderId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        console.log(responseData);
+
+
+        return responseData;
+    } catch (error) {
+        console.error("Error posting order detail:", error);
+        return null;
+    }
+    finally {
+        window.location.reload();
+        showLoader();
+    }
+}
+async function deleteOrderDetail(detailId) {
+
+    try {
+        const response = await fetch(`https://localhost:7238/OrderDetail/Delete/${detailId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const responseData = await response.json();
+        console.log(responseData);
+
+        const deletedDetail = orderDict[orderEditing][1].findIndex(detail => detail.id == detailId);
+        orderDict[orderEditing][1].splice(deletedDetail, 1);
+
+        return responseData;
+    } catch (error) {
+        console.error("Error posting order detail:", error);
+        return null;
+    }
+    finally {
+        cancelOrder();
+    }
+}
 function editOrder(event) {
     event.preventDefault();
     console.log(event);
@@ -629,19 +736,19 @@ async function editOrderDetail() {
     }
 
     updateOrderDetail(data);
-    const updatedDetail = orderDict[orderDetailEditing.orderId].findIndex(detail => detail.id == orderDetailEditing.id);
-    const olderDetail = orderDict[orderEditing].findIndex(detail => detail.id != orderDetailEditing.id && detail.menuItemId == menu.id);
+    const updatedDetail = orderDict[orderDetailEditing.orderId][1].findIndex(detail => detail.id == orderDetailEditing.id);
+    const olderDetail = orderDict[orderEditing][1].findIndex(detail => detail.id != orderDetailEditing.id && detail.menuItemId == menu.id);
 
 
 
     if (olderDetail == -1) {
-        orderDict[orderDetailEditing.orderId][updatedDetail] = { ...orderDict[orderDetailEditing.orderId][updatedDetail], menuItemId: menu.id, menuItem: menu, quantity: data.quantity };
+        orderDict[orderDetailEditing.orderId][1][updatedDetail] = { ...orderDict[orderDetailEditing.orderId][1][updatedDetail], menuItemId: menu.id, menuItem: menu, quantity: data.quantity };
         console.log("a girişi");
     }
     else {
-        let total = Number(orderDict[orderEditing][olderDetail].quantity) + Number(quantityInput.value);
-        orderDict[orderEditing][olderDetail] = { ...orderDict[orderEditing][olderDetail], quantity: total }
-        orderDict[orderEditing].splice(updatedDetail,1);
+        let total = Number(orderDict[orderEditing][1][olderDetail].quantity) + Number(quantityInput.value);
+        orderDict[orderEditing][1][olderDetail] = { ...orderDict[orderEditing][1][olderDetail], quantity: total }
+        orderDict[orderEditing][1].splice(updatedDetail, 1);
         console.log("b girişi");
     }
 
@@ -652,5 +759,52 @@ async function editOrderDetail() {
 
 
 }
+
+
+function callDeleteOrder(id) {
+    console.log(id);
+    const res = confirm("Are you sure to delete?");
+    if (res) {
+        deleteOrder(id);
+    }
+    else {
+        console.log("silmedi");
+    }
+}
+function callDeleteOrderDetail(id) {
+    console.log(id);
+    const res = confirm("Are you sure to delete?");
+    if (res) {
+        if (orderDict[orderEditing][1].length == 1) {
+            const resToOrder = confirm("You are about to delete the last menu item. Related order will also be deleted. Are you sure?");
+            if (resToOrder) {
+                deleteOrder(orderEditing);
+            }
+        }
+        else {
+            deleteOrderDetail(id);
+        }
+    }
+    else {
+        console.log("silmedi");
+    }
+}
+
+
+function callUpdateOrderStatus(orderId, _status) {
+    const data = {
+        id: orderId,
+        status: _status,
+        tableId: orderDict[orderId][2]
+    };
+    console.log(orderId);
+    updateOrder(data);
+    orderDict[orderId][0] = _status;
+    showLoader();
+    hideOrderList();
+    window.location.reload();
+
+}
+
 const orderCreateForm = document.getElementById("order-upper-container");
 orderCreateForm?.addEventListener("submit", processOrder);

@@ -6,17 +6,17 @@ namespace CafeOrderManagement.Controllers
 {
 	[Route("[Controller]/[action]")]
 	[ApiController]
-	public class OrderController:ControllerBase
+	public class OrderController : ControllerBase
 	{
 		private readonly IOrderRepository _orderRepo;
-        public OrderController(IOrderRepository orderRepo)
-        {
-            _orderRepo = orderRepo;
-        }
+		public OrderController(IOrderRepository orderRepo)
+		{
+			_orderRepo = orderRepo;
+		}
 		[HttpGet]
 		public IActionResult GetAll()
 		{
-			List<Order> orders = _orderRepo.GetAll(includeProperties:"Table").ToList();
+			List<Order> orders = _orderRepo.GetAll(includeProperties: "Table").ToList();
 			return Ok(orders);
 		}
 		[HttpGet("{id:int}")]
@@ -24,7 +24,7 @@ namespace CafeOrderManagement.Controllers
 		{
 			if (id != 0)
 			{
-				Order order = _orderRepo.Get(u => u.Id == id,includeProperties:"Table");
+				Order order = _orderRepo.Get(u => u.Id == id, includeProperties: "Table");
 				return Ok(order);
 			}
 			else
@@ -41,7 +41,7 @@ namespace CafeOrderManagement.Controllers
 				{
 					_orderRepo.Add(order);
 					_orderRepo.Save();
-					return Ok(new { success = true, message = "Order created successfully.", orderId=order.Id });
+					return Ok(new { success = true, message = "Order created successfully.", orderId = order.Id });
 				}
 				catch (Exception exception)
 				{
@@ -85,9 +85,16 @@ namespace CafeOrderManagement.Controllers
 			try
 			{
 				Order order = _orderRepo.Get(u => u.Id == id);
-				_orderRepo.Remove(order);
-				_orderRepo.Save();
-				return Ok(new { success = true, message = "Order deleted successfully" });
+				if (order.Status!=Order.OrderStatus.Pending)
+				{
+					return BadRequest("Rejected or completed orders cannot be deleted.");
+				}
+				else
+				{
+					_orderRepo.Remove(order);
+					_orderRepo.Save();
+					return Ok(new { success = true, message = "Order deleted successfully" });
+				}
 			}
 			catch (Exception exception)
 			{
