@@ -254,7 +254,11 @@ function addOrderDetailOnEdit() {
     showElementById("add-menu-item-container");
     hideByClassName("order-button");
     showByClassName("order-detail-add-button");
-    const menuSelect = document.getElementById("menu-item-select").querySelector("select");
+    const menuSelect = document.getElementById("menu-item-select").querySelector("select").querySelectorAll("option");
+    //for (let option of menuSelect) {
+    //    option.selected = false;
+    //    console.log(option);
+    //}
 
 
 }
@@ -395,7 +399,12 @@ function openModal() {
     hideElementById("order-detail-list");
     hideByClassName("order-container-list");
     showElementById("add-menu-item-container");
-
+    hideElementById("new-order-button");
+    hideElementById("new-order-button");
+    const menuSelect = document.getElementById("menu-item-select").querySelector("select");
+    menuSelect.value = "";
+    const quantity = document.getElementById("menu-item-quantity").querySelector("input");
+    quantity.value = "1";
 }
 function hideModal() {
     const editModal = document.getElementsByClassName("edit-modal")[0];
@@ -490,6 +499,7 @@ function cancelOrder() {
     loadOrders();
     hideElementById("add-menu-item-container");
     hideElementById("menu-item-quantity");
+    showElementById("new-order-button");
 
 }
 
@@ -617,6 +627,7 @@ async function createOrder(event) {
     hideElementById("menu-item-quantity");
     window.location.reload();
     showLoader();
+    showElementById("new-order-button");
 }
 async function deleteOrder(orderId) {
 
@@ -709,6 +720,11 @@ function openEditOrderModel(orderId, tableId) {
     showElementById("order-detail-list");
     hideByClassName("order-container-list");
     loadOrderContent(orderId);
+    hideElementById("new-order-button");
+    const menuSelect = document.getElementById("menu-item-select").querySelector("select");
+    menuSelect.value = "";
+    const quantity = document.getElementById("menu-item-quantity").querySelector("input");
+    quantity.value = "1";
 }
 
 async function openEditOrderDetailModel(id) {
@@ -764,6 +780,14 @@ function cancelOrderDetail() {
     const editOuterContainer = document.getElementById("edit-menu-item-container");
     editOuterContainer.classList.add("hidden");
     editOuterContainer.innerHTML = "";
+
+
+  
+    const menuSelect = document.getElementById("menu-item-select").querySelector("select");
+    menuSelect.value = "";
+    const quantity = document.getElementById("menu-item-quantity").querySelector("input");
+    quantity.value = "1";
+
 }
 async function editOrderDetail() {
 
