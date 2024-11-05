@@ -2,22 +2,35 @@
 let orderEditing;
 let orderDict = {};
 
+function showElementById(id) {
+    const element = document.getElementById(id);
+    element.classList.remove("hidden");
+}
+function hideElementById(id) {
+    const element = document.getElementById(id);
+    element.classList.add("hidden");
+}
+function showByClassName(name) {
+    const element = document.getElementsByClassName(name)[0];
+    element.classList.remove("hidden");
+}
+function hideByClassName(name) {
+    const element = document.getElementsByClassName(name)[0];
+    element.classList.add("hidden");
+}
+
+
+
+
 function showLoader() {
-    const loader = document.getElementById("loader");
-    loader.classList.remove("hidden");
-    const loaderContainer = document.getElementById("loader-container");
-    loaderContainer.classList.remove("hidden");
-    console.log("shows")
+    showElementById("loader");
+    showElementById("loader-container");
+}
+function hideLoader() {
+    hideElementById("loader");
+    hideElementById("loader-container");
 }
 showLoader();
-function hideLoader() {
-    const loader = document.getElementById("loader");
-    loader.classList.add("hidden");
-    const loaderContainer = document.getElementById("loader-container");
-    loaderContainer.classList.add("hidden");
-    console.log("hides")
-
-}
 
 async function loadOrders() {
     try {
@@ -237,12 +250,12 @@ async function loadOrderContent(orderId) {
 
 function addOrderDetailOnEdit() {
     console.log("a.");
-    hideOrderDetailList();
-    showAddDetailContainer();
-    hideOrderButtons();
-    showOrderDetailAddButtons();
+    hideElementById("order-detail-list");
+    showElementById("add-menu-item-container");
+    hideByClassName("order-button");
+    showByClassName("order-detail-add-button");
     const menuSelect = document.getElementById("menu-item-select").querySelector("select");
-    
+
 
 }
 async function createOrderDetailOnEdit() {
@@ -252,10 +265,10 @@ async function createOrderDetailOnEdit() {
 
     if (!menuSelect.value) {
         menuSelect.setCustomValidity('Cannot be left blank.');
-        menuSelect.reportValidity(); 
-        return; 
+        menuSelect.reportValidity();
+        return;
     } else {
-        menuSelect.setCustomValidity(''); 
+        menuSelect.setCustomValidity('');
     }
     const quantityInput = document.getElementById("menu-item-quantity").querySelector("input");
 
@@ -321,13 +334,14 @@ async function loadMenuItems(menuItemId = null) {
     const menus = await response.json();
     console.log(menus);
     for (const menuSelect of menuSelectElements) {
+        console.log(menuSelect);
         menuSelect.innerHTML = "";
         const selectElement = document.createElement("select");
         selectElement.setAttribute("name", "menuItem");
         //selectElement.required = true;
         selectElement.setAttribute("oninvalid", "this.setCustomValidity('Cannot be left blank.')");
         selectElement.setAttribute("oninput", "this.setCustomValidity('')");
-        selectElement.setAttribute("onchange", "showQuantity()");
+        selectElement.setAttribute("onchange", "showElementById('menu-item-quantity')");
         selectElement.innerHTML = `<option disabled ${menuItemId ? "" : "selected"} value="">Choose a menu</option>`;
         for (const item of menus) {
             console.log(item);
@@ -342,6 +356,9 @@ async function loadMenuItems(menuItemId = null) {
             selectElement.appendChild(optionElement);
         }
         menuSelect.appendChild(selectElement);
+        console.log(selectElement);
+        console.log(menuSelect);
+
     }
 }
 
@@ -369,15 +386,15 @@ function openModal() {
     const editButton = document.getElementById("modal-submit-button");
     editButton.innerText = "Create Order";
 
-    const menuSelect = document.getElementById("menu-item-select");
-    menuSelect.innerHTML = "";
+    //const menuSelect = document.getElementById("menu-item-select");
+    //menuSelect.innerHTML = "";
 
     const editModal = document.getElementsByClassName("edit-modal")[0];
     editModal.classList.remove("hidden");
 
-    hideOrderDetailList();
-    hideOrderList();
-    showAddDetailContainer();
+    hideElementById("order-detail-list");
+    hideByClassName("order-container-list");
+    showElementById("add-menu-item-container");
 
 }
 function hideModal() {
@@ -385,73 +402,77 @@ function hideModal() {
     editModal.classList.add("hidden");
 }
 
-function showQuantity() {
-    const quantity = document.getElementById("menu-item-quantity");
-    quantity.classList.remove("hidden");
-}
-function hideQuantity() {
-    const quantity = document.getElementById("menu-item-quantity");
-    quantity.classList.add("hidden");
-}
+//function showQuantity() {
+//    const quantity = document.getElementById("menu-item-quantity");
+//    quantity.classList.remove("hidden");
+//}
+//function hideQuantity() {
+//    const quantity = document.getElementById("menu-item-quantity");
+//    quantity.classList.add("hidden");
+//}
 
-function showOrderDetailList() {
-    const detailList = document.getElementById("order-detail-list");
-    detailList.classList.remove("hidden");
-}
-function hideOrderDetailList() {
-    const detailList = document.getElementById("order-detail-list");
-    detailList.classList.add("hidden");
-}
+//function showOrderDetailList() {
+//    const detailList = document.getElementById("order-detail-list");
+//    detailList.classList.remove("hidden");
+//}
+//function hideOrderDetailList() {
+//    const detailList = document.getElementById("order-detail-list");
+//    detailList.classList.add("hidden");
+//}
 
-function hideOrderButtons() {
-    const orderButtons = document.getElementsByClassName("order-button")[0];
-    orderButtons.classList.add("hidden");
-}
-function showOrderButtons() {
-    const orderButtons = document.getElementsByClassName("order-button")[0];
-    orderButtons.classList.remove("hidden");
-}
-function hideOrderDetailButtons() {
-    const orderDetailButtons = document.getElementsByClassName("order-detail-button")[0];
-    orderDetailButtons.classList.add("hidden");
-}
-function showOrderDetailButtons() {
-    const orderDetailButtons = document.getElementsByClassName("order-detail-button")[0];
-    orderDetailButtons.classList.remove("hidden");
-}
-function hideOrderDetailAddButtons() {
-    const orderDetailButtons = document.getElementsByClassName("order-detail-add-button")[0];
-    orderDetailButtons.classList.add("hidden");
-}
-function showOrderDetailAddButtons() {
-    const orderDetailButtons = document.getElementsByClassName("order-detail-add-button")[0];
-    orderDetailButtons.classList.remove("hidden");
-}
-function hideOrderList() {
-    const orderList = document.getElementsByClassName("order-container-list")[0];
-    orderList.classList.add("hidden");
-}
-function showOrderList() {
-    const orderList = document.getElementsByClassName("order-container-list")[0];
-    orderList.classList.remove("hidden");
-}
-function hideSelectContainer() {
-    const orderList = document.getElementsByClassName("select-container")[0];
-    orderList.classList.add("hidden");
-}
-function showSelectContainer() {
-    const orderList = document.getElementsByClassName("select-container")[0];
-    orderList.classList.remove("hidden");
-}
-function hideAddDetailContainer() {
-    const orderList = document.getElementById("add-menu-item-container");
-    orderList.classList.add("hidden");
-}
-function showAddDetailContainer() {
-    const orderList = document.getElementById("add-menu-item-container");
-    orderList.classList.remove("hidden");
-    loadMenuItems();
-}
+//function hideOrderButtons() {
+//    const orderButtons = document.getElementsByClassName("order-button")[0];
+//    orderButtons.classList.add("hidden");
+//}
+//function showOrderButtons() {
+//    const orderButtons = document.getElementsByClassName("order-button")[0];
+//    orderButtons.classList.remove("hidden");
+//}
+//function hideOrderDetailButtons() {
+//    const orderDetailButtons = document.getElementsByClassName("order-detail-button")[0];
+//    orderDetailButtons.classList.add("hidden");
+//}
+//function showOrderDetailButtons() {
+//    const orderDetailButtons = document.getElementsByClassName("order-detail-button")[0];
+//    orderDetailButtons.classList.remove("hidden");
+//}
+//function hideOrderDetailAddButtons() {
+//    const orderDetailButtons = document.getElementsByClassName("order-detail-add-button")[0];
+//    orderDetailButtons.classList.add("hidden");
+//}
+
+//function showOrderDetailAddButtons() {
+//    const orderDetailButtons = document.getElementsByClassName("order-detail-add-button")[0];
+//    orderDetailButtons.classList.remove("hidden");
+//}
+//function hideOrderList() {
+//    const orderList = document.getElementsByClassName("order-container-list")[0];
+//    orderList.classList.add("hidden");
+//}
+
+//function showOrderList() {
+//    const orderList = document.getElementsByClassName("order-container-list")[0];
+//    orderList.classList.remove("hidden");
+//}
+//function hideSelectContainer() {
+//    const orderList = document.getElementsByClassName("select-container")[0];
+//    orderList.classList.add("hidden");
+//}
+
+//function showSelectContainer() {
+//    const orderList = document.getElementsByClassName("select-container")[0];
+//    orderList.classList.remove("hidden");
+//}
+//function hideAddDetailContainer() {
+//    const orderList = document.getElementById("add-menu-item-container");
+//    orderList.classList.add("hidden");
+//}
+
+//function showAddDetailContainer() {
+//    const orderList = document.getElementById("add-menu-item-container");
+//    orderList.classList.remove("hidden");
+//    loadMenuItems();
+//}
 
 
 loadOrders();
@@ -465,10 +486,10 @@ function cancelOrder() {
     const editOuterContainer = document.getElementById("edit-menu-item-container");
     editOuterContainer.innerHTML = "";
     hideModal();
-    showOrderList();
+    showByClassName("order-container-list");
     loadOrders();
-    hideAddDetailContainer();
-    hideQuantity();
+    hideElementById("add-menu-item-container");
+    hideElementById("menu-item-quantity");
 
 }
 
@@ -593,7 +614,7 @@ async function createOrder(event) {
     await postOrderDetail(data);
 
     hideModal();
-    hideQuantity();
+    hideElementById("menu-item-quantity");
     window.location.reload();
     showLoader();
 }
@@ -685,19 +706,19 @@ function openEditOrderModel(orderId, tableId) {
 
     const tableSelect = document.getElementById("table-select-select");
     tableSelect.value = tableId;
-    showOrderDetailList();
-    hideOrderList();
+    showElementById("order-detail-list");
+    hideByClassName("order-container-list");
     loadOrderContent(orderId);
 }
 
 async function openEditOrderDetailModel(id) {
     const orderDetail = await getOrderDetail(id);
     console.log(orderDetail);
-    hideOrderDetailList();
-    hideOrderButtons();
-    showOrderDetailButtons();
-    hideOrderDetailAddButtons();
-    hideSelectContainer();
+    hideElementById("order-detail-list");
+    hideByClassName("order-button");
+    showByClassName("order-detail-button");
+    hideByClassName("order-detail-add-button");
+    hideByClassName("select-container");
     const editOuterContainer = document.getElementById("edit-menu-item-container");
     editOuterContainer.classList.remove("hidden");
 
@@ -730,12 +751,12 @@ async function openEditOrderDetailModel(id) {
 
 }
 function cancelOrderDetail() {
-    showOrderDetailList();
-    showOrderButtons();
-    hideOrderDetailButtons();
-    hideOrderDetailAddButtons();
-    showSelectContainer();
-    hideAddDetailContainer();
+    showElementById("order-detail-list");
+    showByClassName("order-button");
+    hideByClassName("order-detail-button");
+    hideByClassName("order-detail-add-button");
+    showByClassName("select-container");
+    hideElementById("add-menu-item-container");
 
     //const orderCreateForm = document.getElementById("order-upper-container");
     //orderCreateForm.reset();
@@ -827,7 +848,7 @@ function callUpdateOrderStatus(orderId, _status) {
     updateOrder(data);
     orderDict[orderId][0] = _status;
     showLoader();
-    hideOrderList();
+    hideByClassName("order-container-list");
     window.location.reload();
 
 }
