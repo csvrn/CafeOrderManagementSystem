@@ -45,7 +45,7 @@
                                 </div>
                                 <div id="menu-item-quantity" class="select-container hidden">
                                     <h4 style=" margin:10px 10px 10px 0px">Choose Quantity:</h4>
-                                    <input name="quantity" type="number" class="quantity-input" min="1" max="50" value="1" />
+                                    <input name="quantity" type="number" class="quantity-input" min="1" max="50" value="1" required />
                                 </div>
                                 <!--<div id="menu-item-price" class="select-container hidden">
                     <h4 style=" margin:10px 10px 10px 0px">Price:</h4>
@@ -88,7 +88,7 @@
                         <button id="modal-submit-button" class="button" type="button" onclick="editOrderDetail()"><i class="bi bi-plus-square"></i>Edit Order Detail</button>
                     </div>
                     <div class="order-detail-add-button hidden">
-                        <button class="button cancel" type="button" onclick="cancelOrderDetail()"><i class="bi bi-x-square" style="background-color: #DB79A9; border-color: #DB79A9 "></i>Cancel</button>
+                        <button class="button cancel" type="button" onclick="cancelOrderDetail()" style="background-color: #DB79A9; border-color: #DB79A9"><i class="bi bi-x-square"></i>Cancel</button>
                         <button id="modal-submit-button" class="button" type="button" onclick="createOrderDetailOnEdit()"><i class="bi bi-plus-square"></i>Add Order Detail</button>
                     </div>
 

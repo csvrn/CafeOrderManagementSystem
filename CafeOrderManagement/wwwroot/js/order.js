@@ -248,6 +248,13 @@ async function createOrderDetailOnEdit() {
     console.log("a.");
 
     const menuSelect = document.getElementById("menu-item-select").querySelector("select");
+    if (!menuSelect.value) {
+        menuSelect.setCustomValidity('Cannot be left blank.');
+        menuSelect.reportValidity(); 
+        return; 
+    } else {
+        menuSelect.setCustomValidity(''); 
+    }
     const quantityInput = document.getElementById("menu-item-quantity").querySelector("input");
 
     console.log("Selected menuItemId:", menuSelect.value);
@@ -290,7 +297,11 @@ async function loadTables() {
     const selectElement = document.createElement("select");
     selectElement.setAttribute("id", "table-select-select");
     selectElement.setAttribute("name", "table");
-    selectElement.innerHTML = '<option disabled selected>Choose a table</option>';
+    selectElement.setAttribute("oninvalid", "this.setCustomValidity('Cannot be left blank.')");
+    selectElement.setAttribute("oninput", "this.setCustomValidity('')");
+
+    selectElement.required = true;
+    selectElement.innerHTML = '<option disabled selected value=""  >Choose a table</option>';
 
     for (const table of tables) {
         console.log(table);
@@ -312,8 +323,11 @@ async function loadMenuItems(menuItemId = null) {
         menuSelect.innerHTML = "";
         const selectElement = document.createElement("select");
         selectElement.setAttribute("name", "menuItem");
+        selectElement.required = true;
+        selectElement.setAttribute("oninvalid", "this.setCustomValidity('Cannot be left blank.')");
+        selectElement.setAttribute("oninput", "this.setCustomValidity('')");
         selectElement.setAttribute("onchange", "showQuantity()");
-        selectElement.innerHTML = `<option disabled ${menuItemId ? "" : "selected"}>Choose a menu</option>`;
+        selectElement.innerHTML = `<option disabled ${menuItemId ? "" : "selected"} value="">Choose a menu</option>`;
         for (const item of menus) {
             console.log(item);
             const optionElement = document.createElement("option");
