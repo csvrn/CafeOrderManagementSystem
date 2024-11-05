@@ -241,13 +241,15 @@ function addOrderDetailOnEdit() {
     showAddDetailContainer();
     hideOrderButtons();
     showOrderDetailAddButtons();
-
+    const menuSelect = document.getElementById("menu-item-select").querySelector("select");
+    
 
 }
 async function createOrderDetailOnEdit() {
     console.log("a.");
 
     const menuSelect = document.getElementById("menu-item-select").querySelector("select");
+
     if (!menuSelect.value) {
         menuSelect.setCustomValidity('Cannot be left blank.');
         menuSelect.reportValidity(); 
@@ -283,7 +285,6 @@ async function createOrderDetailOnEdit() {
     loadOrderContent(orderEditing);
     cancelOrderDetail();
     quantityInput.value = 1;
-
 
 
 }
@@ -323,7 +324,7 @@ async function loadMenuItems(menuItemId = null) {
         menuSelect.innerHTML = "";
         const selectElement = document.createElement("select");
         selectElement.setAttribute("name", "menuItem");
-        selectElement.required = true;
+        //selectElement.required = true;
         selectElement.setAttribute("oninvalid", "this.setCustomValidity('Cannot be left blank.')");
         selectElement.setAttribute("oninput", "this.setCustomValidity('')");
         selectElement.setAttribute("onchange", "showQuantity()");
@@ -557,11 +558,11 @@ function processOrder(event) {
     }
     else {
         createOrder(event);
+        const menuSelect = document.getElementById("menu-item-select").querySelector("select");
     }
 }
 
 async function createOrder(event) {
-    alert("The form was submitted");
     event.preventDefault();
     const formData = new FormData(event.target);
     const tableId = formData.get("table");
@@ -569,6 +570,15 @@ async function createOrder(event) {
     let data = { "TableId": tableId, "Status": "Pending" };
     const orderId = await postOrder(data);
     console.log(orderId);
+    const menuSelect = document.getElementById("menu-item-select").querySelector("select");
+
+    if (!menuSelect.value) {
+        menuSelect.setCustomValidity('Cannot be left blank.');
+        menuSelect.reportValidity();
+        return;
+    } else {
+        menuSelect.setCustomValidity('');
+    }
     const menuItemId = formData.get("menuItem");
     const menuItem = await getMenuItem(menuItemId);
     const quantity = formData.get("quantity");
@@ -650,6 +660,8 @@ function editOrder(event) {
     const orderForm = document.getElementById("order-upper-container");
     const form = new FormData(orderForm);
     const tableId = form.get("table");
+    //const menuItemSelect = document.getElementsByClassName("menuItem");
+    //menuItemSelect.setCustomValidity(''); // Clear any previous validation message
     console.log(tableId);
     const data = {
         id: orderEditing,
