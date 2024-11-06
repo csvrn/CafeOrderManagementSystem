@@ -20,8 +20,10 @@ namespace CafeOrderManagement.DataAccess.Data
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);
+			modelBuilder.Entity<Category>().Property(u => u.Name).HasColumnType("nvarchar(255)");
 			modelBuilder.Entity<Category>().HasIndex(u => u.Name).IsUnique();
-			
+
+			modelBuilder.Entity<MenuItem>().Property(u => u.Name).HasColumnType("nvarchar(255)");
 			modelBuilder.Entity<MenuItem>().HasIndex(u => u.Name).IsUnique();
 			modelBuilder.Entity<MenuItem>().HasIndex(u => u.CategoryId);
 			modelBuilder.Entity<MenuItem>().HasIndex(u => new { u.CategoryId, u.Price });

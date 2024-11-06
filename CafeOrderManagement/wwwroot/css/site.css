@@ -203,6 +203,7 @@ nav {
     display: grid;
     grid-row-gap: 50px;
     grid-template-columns: 1fr 1fr 1fr;
+    grid-column-gap:20px !important;
     height:min-content;
     margin-bottom:100px;
 }

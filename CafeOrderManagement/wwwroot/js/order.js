@@ -29,7 +29,7 @@ function hideLoader() {
     hideElementById("loader");
     hideElementById("loader-container");
 }
-//showLoader();
+showLoader();
 
 
 //function to load orders and order details
@@ -706,7 +706,7 @@ function editOrder(event) {
     };
     updateOrder(data);
     cancelOrder();
-    //showLoader();
+    showLoader();
     window.location.reload();
 }
 //shows the panel for editing an order
@@ -869,17 +869,23 @@ function callDeleteOrderDetail(id) {
 
 
 function callUpdateOrderStatus(orderId, _status) {
-    const data = {
-        id: orderId,
-        status: _status,
-        tableId: orderDict[orderId][2]
-    };
-    console.log(orderId);
-    updateOrder(data);
-    orderDict[orderId][0] = _status;
-    showLoader();
-    hideByClassName("order-container-list");
-    window.location.reload();
+    const res = confirm("Rejected or completed orders cannot be deleted. Are you sure to proceed?");
+    if (res) {
+        const data = {
+            id: orderId,
+            status: _status,
+            tableId: orderDict[orderId][2]
+        };
+        console.log(orderId);
+        updateOrder(data);
+        orderDict[orderId][0] = _status;
+        showLoader();
+        hideByClassName("order-container-list");
+        window.location.reload();
+    }
+    else {
+        console.log("silmedi");
+    }
 
 }
 
