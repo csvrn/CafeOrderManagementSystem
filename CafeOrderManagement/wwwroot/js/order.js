@@ -37,28 +37,24 @@ async function loadOrders() {
     try {
         const orderContainerList = document.getElementsByClassName('order-container-list')[0];
         orderContainerList.innerHTML = "";
+
         const response = await fetch('https://localhost:7238/OrderDetail/GetAllNested');
-
         const orderDetails = await response.json();
-        console.log(orderDetails);
-        let detailsByOrders = Object.groupBy(orderDetails, ({ orderId }) => orderId);
-        console.log(detailsByOrders);
 
+        //arranging orders and order details into a collection
+        //order details are grouped by their order ids
+        let detailsByOrders = Object.groupBy(orderDetails, ({ orderId }) => orderId);
         Object.entries(detailsByOrders).forEach(([orderId, orderDetails]) => {
-            console.log(orderId);
-            console.log(orderDetails);
             const orderStatus = orderDetails[0]?.order.status;
             const tableId = orderDetails[0]?.order.tableId;
             orderDict[orderId] = [orderStatus, orderDetails, tableId];
         });
 
-        console.log("grouped: ", orderDict);
+        //looping through orders
         for (const [key, details] of Object.entries(orderDict)) {
-            console.log("is that an order with 2 details: ", details);
-            console.log("is that tea detail: ", details[1]);
-            //const orderStatus = details[0];
             const orderDetail = details[1][0];
-            console.log("val: ", orderDetail);
+
+            //creating html for an order container
             const orderContainerElement = document.createElement("div");
             orderContainerElement.setAttribute("id", "order-container");
             const orderUpperContainerElement = document.createElement("div");
@@ -81,11 +77,9 @@ async function loadOrders() {
             }
             orderUpperContainerElement.appendChild(orderContainerHeader);
 
+            //looping through order details
             for (let i = 0; i < details[1].length; i++) {
-
                 let item = details[1][i];
-                console.log("response: ", item);
-
                 const orderElement = document.createElement("div");
                 orderElement.classList.add("order");
                 orderElement.innerHTML = `
@@ -110,7 +104,8 @@ async function loadOrders() {
 
             const editContainer = document.createElement("div");
             editContainer.classList.add("order-edit-container");
-            console.log("key: ", key);
+
+            //delete and status updating icons will only be rendered for the orders with the status "Pending"
             editContainer.innerHTML = `
                 
                ${details[0] == "Pending" ?
@@ -133,10 +128,6 @@ async function loadOrders() {
                 </div>`
                 }`;
 
-
-
-
-
             itemCountDiv.appendChild(editContainer);
             orderContainerElement.appendChild(itemCountDiv);
             orderContainerList.appendChild(orderContainerElement);
@@ -144,14 +135,10 @@ async function loadOrders() {
         }
     }
     catch (error) {
-        console.error("Error loading orders:", error);
         alert("Error loading orders.");
     } finally {
         hideLoader();
     }
-
-
-
 }
 
 
@@ -159,14 +146,9 @@ async function loadOrders() {
 async function loadOrderContent(orderId) {
     const orderContainerList = document.getElementById('order-detail-list');
     orderContainerList.innerHTML = "";
-    console.log(orderId);
 
-    /*showLoader();*/
     try {
-        const response = await fetch(`https://localhost:7238/OrderDetail/GetAllByOrder/${orderId}`);
-        let orderDetails = await response.json();
         orderDetails = orderDict[orderId];
-        console.log(orderDetails);
 
         orderContainerList.innerHTML = `
         <button class="button" style="justify-self:right" type="button" onclick="addOrderDetailOnEdit()">
@@ -174,33 +156,13 @@ async function loadOrderContent(orderId) {
             Add Menu Item
         </button>`;
 
+        //looping through order details
         for (const [key, details] of Object.entries(orderDetails[1])) {
             const orderDetail = details;
-            console.log("val: ", orderDetail);
 
-            //const orderContainerElement = document.createElement("div");
-            //orderContainerElement.setAttribute("id", "order-container");
-            //const orderUpperContainerElement = document.createElement("div");
-            //orderUpperContainerElement.setAttribute("id", "order-upper-container");
-            //const orderContainerHeader = document.createElement("div");
-            //orderContainerHeader.classList.add("order-container-header");
-            //const orderTitle = document.createElement("h2");
-            //orderTitle.setAttribute("style", "font-size: 18px; margin-top: 10px; margin-left: 10px; margin-bottom: 25px");
-            //orderTitle.textContent = `Order #${orderDetail.orderId} - Table ${orderDetail.order.table.number}`;
-            //const orderEditIcon = document.createElement("i");
-            //orderEditIcon.setAttribute("class", "bi bi-pencil-square");
-            //orderEditIcon.setAttribute("style", "font-size: 36px; color:gray");
-            //orderEditIcon.onclick = function () {
-            //    openEditOrderModel(orderId);
-            //}
-            //orderContainerHeader.appendChild(orderTitle);
-            //orderContainerHeader.appendChild(orderEditIcon);
-            //orderUpperContainerElement.appendChild(orderContainerHeader);
-
-
+            //creating order detail html
             const orderElement = document.createElement("div");
             orderElement.classList.add("order");
-            console.log("burası: ", orderDetail.menuItem.category.name);
             orderElement.innerHTML = `
                         <img id="order-image" src="images/food.png" />
                         <div id="order-detail">
@@ -224,52 +186,25 @@ async function loadOrderContent(orderId) {
                       
             `;
             orderContainerList.appendChild(orderElement);
-
-
-            //orderContainerElement.appendChild(orderUpperContainerElement);
-            //const editContainer = document.createElement("div");
-            //editContainer.classList.add("order-edit-container");
-            //editContainer.innerHTML = `
-            //    <div>X${detail.length} items</div>
-            //    <div style="font-size:36px">
-            //        <i style="color: #DB79A9;" class="bi bi-x-square"></i>
-            //        <i style="color: #87B6A1;" class="bi bi-check-square"></i>
-            //    </div>`;
-            //orderContainerElement.appendChild(editContainer);
-            //orderContainerList.appendChild(orderContainerElement);
-
         }
     }
     catch (error) {
-        console.error("Error loading order's content:", error);
         alert("Error loading order's content.");
     } finally {
         hideLoader();
     }
-
-
-
 }
 
 //shows the panel for adding order details
 function addOrderDetailOnEdit() {
-    console.log("a.");
     hideElementById("order-detail-list");
     showElementById("add-menu-item-container");
     hideByClassName("order-button");
     showByClassName("order-detail-add-button");
-    const menuSelect = document.getElementById("menu-item-select").querySelector("select").querySelectorAll("option");
-    //for (let option of menuSelect) {
-    //    option.selected = false;
-    //    console.log(option);
-    //}
-
-
 }
+
 //called when create order detail button is clicked
 async function createOrderDetailOnEdit() {
-    console.log("a.");
-
     const menuSelect = document.getElementById("menu-item-select").querySelector("select");
 
     if (!menuSelect.value) {
@@ -280,9 +215,6 @@ async function createOrderDetailOnEdit() {
         menuSelect.setCustomValidity('');
     }
     const quantityInput = document.getElementById("menu-item-quantity").querySelector("input");
-
-    console.log("Selected menuItemId:", menuSelect.value);
-    console.log("Quantity:", quantityInput.value);
     const menu = await getMenuItem(menuSelect?.value);
     const data =
     {
@@ -293,23 +225,22 @@ async function createOrderDetailOnEdit() {
     }
 
     const orderDetailId = await postOrderDetail(data);
-    console.log(orderDetailId);
+
+    //updating order dictionary for easy access
     const olderDetail = orderDict[orderEditing][1].findIndex(detail => detail.menuItemId == menu.id);
     if (olderDetail == -1) {
         orderDict[orderEditing][1].push({ ...data, id: orderDetailId, menuItem: menu });
 
     }
     else {
-
         let total = Number(orderDict[orderEditing][1][olderDetail].quantity) + Number(quantityInput.value);
         orderDict[orderEditing][1][olderDetail] = { ...orderDict[orderEditing][1][olderDetail], quantity: total }
     }
     loadOrderContent(orderEditing);
     cancelOrderDetail();
     quantityInput.value = 1;
-
-
 }
+
 //populates select element for table records
 async function loadTables() {
     try {
@@ -317,7 +248,6 @@ async function loadTables() {
 
         const response = await fetch('https://localhost:7238/Table/GetAll');
         const tables = await response.json();
-        console.log(tables);
 
         const selectElement = document.createElement("select");
         selectElement.setAttribute("id", "table-select-select");
@@ -329,7 +259,6 @@ async function loadTables() {
         selectElement.innerHTML = '<option disabled selected value=""  >Choose a table</option>';
 
         for (const table of tables) {
-            console.log(table);
             const optionElement = document.createElement("option");
             optionElement.setAttribute("value", table.id);
             optionElement.setAttribute("id", "menu-select-option");
@@ -339,58 +268,50 @@ async function loadTables() {
         tableSelect.appendChild(selectElement);
     }
     catch (error) {
-        console.log("Error loading tables: ", error);
         alert("Error loading tables.");
     }
-
 }
+
 //populates select element for menu items
 async function loadMenuItems(menuItemId = null) {
     try {
         const menuSelectElements = document.getElementsByClassName("menu-item-select");
         const response = await fetch('https://localhost:7238/MenuItem/GetAll');
         const menus = await response.json();
-        console.log(menus);
+
+        //populating the div with the table select element
         for (const menuSelect of menuSelectElements) {
-            console.log(menuSelect);
+            
             menuSelect.innerHTML = "";
             const selectElement = document.createElement("select");
             selectElement.setAttribute("name", "menuItem");
-            //selectElement.required = true;
             selectElement.setAttribute("oninvalid", "this.setCustomValidity('Cannot be left blank.')");
             selectElement.setAttribute("oninput", "this.setCustomValidity('')");
             selectElement.setAttribute("onchange", "showElementById('menu-item-quantity')");
             selectElement.innerHTML = `<option disabled ${menuItemId ? "" : "selected"} value="">Choose a menu</option>`;
+
             for (const item of menus) {
-                console.log(item);
                 const optionElement = document.createElement("option");
                 optionElement.setAttribute("value", item.id);
                 optionElement.innerText = item.name;
                 if (menuItemId != null && item.id == menuItemId) {
-                    console.log("matched: ", menuItemId);
                     optionElement.setAttribute("selected", "selected");
                 }
-                console.log(item.id);
                 selectElement.appendChild(optionElement);
             }
             menuSelect.appendChild(selectElement);
-            console.log(selectElement);
-            console.log(menuSelect);
         }
-
     }
     catch (error) {
-        console.log("Error loading menu items: ", error);
         alert("Error loading menu items.");
     }
 }
 
-
+// get menu item by id
 async function getMenuItem(id) {
     try {
         const response = await fetch(`https://localhost:7238/MenuItem/Get/${id}`);
         const menuItem = await response.json();
-        console.log(menuItem);
         return menuItem;
     }
     catch (error) {
@@ -398,11 +319,11 @@ async function getMenuItem(id) {
     }
 }
 
+//get order detail by id
 async function getOrderDetail(id) {
     try {
         const response = await fetch(`https://localhost:7238/OrderDetail/GetNested/${id}`);
         const menuItem = await response.json();
-        console.log(menuItem);
         return menuItem;
     }
     catch (error) {
@@ -419,9 +340,6 @@ function openModal() {
     const editButton = document.getElementById("modal-submit-button");
     editButton.innerText = "Create Order";
 
-    //const menuSelect = document.getElementById("menu-item-select");
-    //menuSelect.innerHTML = "";
-
     const editModal = document.getElementsByClassName("edit-modal")[0];
     editModal.classList.remove("hidden");
 
@@ -430,88 +348,18 @@ function openModal() {
     showElementById("add-menu-item-container");
     hideElementById("new-order-button");
     hideElementById("new-order-button");
+
+    //resetting the inputs beforehand
     const menuSelect = document.getElementById("menu-item-select").querySelector("select");
     menuSelect.value = "";
     const quantity = document.getElementById("menu-item-quantity").querySelector("input");
     quantity.value = "1";
 }
+
 function hideModal() {
     const editModal = document.getElementsByClassName("edit-modal")[0];
     editModal.classList.add("hidden");
 }
-
-//function showQuantity() {
-//    const quantity = document.getElementById("menu-item-quantity");
-//    quantity.classList.remove("hidden");
-//}
-//function hideQuantity() {
-//    const quantity = document.getElementById("menu-item-quantity");
-//    quantity.classList.add("hidden");
-//}
-
-//function showOrderDetailList() {
-//    const detailList = document.getElementById("order-detail-list");
-//    detailList.classList.remove("hidden");
-//}
-//function hideOrderDetailList() {
-//    const detailList = document.getElementById("order-detail-list");
-//    detailList.classList.add("hidden");
-//}
-
-//function hideOrderButtons() {
-//    const orderButtons = document.getElementsByClassName("order-button")[0];
-//    orderButtons.classList.add("hidden");
-//}
-//function showOrderButtons() {
-//    const orderButtons = document.getElementsByClassName("order-button")[0];
-//    orderButtons.classList.remove("hidden");
-//}
-//function hideOrderDetailButtons() {
-//    const orderDetailButtons = document.getElementsByClassName("order-detail-button")[0];
-//    orderDetailButtons.classList.add("hidden");
-//}
-//function showOrderDetailButtons() {
-//    const orderDetailButtons = document.getElementsByClassName("order-detail-button")[0];
-//    orderDetailButtons.classList.remove("hidden");
-//}
-//function hideOrderDetailAddButtons() {
-//    const orderDetailButtons = document.getElementsByClassName("order-detail-add-button")[0];
-//    orderDetailButtons.classList.add("hidden");
-//}
-
-//function showOrderDetailAddButtons() {
-//    const orderDetailButtons = document.getElementsByClassName("order-detail-add-button")[0];
-//    orderDetailButtons.classList.remove("hidden");
-//}
-//function hideOrderList() {
-//    const orderList = document.getElementsByClassName("order-container-list")[0];
-//    orderList.classList.add("hidden");
-//}
-
-//function showOrderList() {
-//    const orderList = document.getElementsByClassName("order-container-list")[0];
-//    orderList.classList.remove("hidden");
-//}
-//function hideSelectContainer() {
-//    const orderList = document.getElementsByClassName("select-container")[0];
-//    orderList.classList.add("hidden");
-//}
-
-//function showSelectContainer() {
-//    const orderList = document.getElementsByClassName("select-container")[0];
-//    orderList.classList.remove("hidden");
-//}
-//function hideAddDetailContainer() {
-//    const orderList = document.getElementById("add-menu-item-container");
-//    orderList.classList.add("hidden");
-//}
-
-//function showAddDetailContainer() {
-//    const orderList = document.getElementById("add-menu-item-container");
-//    orderList.classList.remove("hidden");
-//    loadMenuItems();
-//}
-
 
 loadOrders();
 loadTables();
@@ -519,7 +367,6 @@ loadMenuItems();
 
 
 function cancelOrder() {
-    console.log("form resetted");
     const orderCreateForm = document.getElementById("order-upper-container");
     orderCreateForm.reset();
     const editOuterContainer = document.getElementById("edit-menu-item-container");
@@ -530,8 +377,8 @@ function cancelOrder() {
     hideElementById("add-menu-item-container");
     hideElementById("menu-item-quantity");
     showElementById("new-order-button");
-
 }
+
 
 async function postOrder(data) {
     try {
@@ -543,16 +390,9 @@ async function postOrder(data) {
             body: JSON.stringify(data)
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
         const responseData = await response.json();
-        console.log(responseData);
-
         return responseData.orderId;
     } catch (error) {
-        //console.error("Error posting order:", error);
         alert("Error posting order.");
         return null;
     }
@@ -568,14 +408,7 @@ async function postOrderDetail(data) {
             body: JSON.stringify(data)
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
         const responseData = await response.json();
-        console.log(responseData.orderDetailId);
-
-
         return responseData.orderDetailId;
     } catch (error) {
         alert("Error posting order detail.");
@@ -632,15 +465,17 @@ function processOrder(event) {
         const menuSelect = document.getElementById("menu-item-select").querySelector("select");
     }
 }
+
 //called when create order button is clicked
 async function createOrder(event) {
     event.preventDefault();
     const formData = new FormData(event.target);
     const tableId = formData.get("table");
-    console.log(tableId);
+
     let data = { "TableId": tableId, "Status": "Pending" };
     const orderId = await postOrder(data);
-    console.log(orderId);
+
+
     const menuSelect = document.getElementById("menu-item-select").querySelector("select");
 
     if (!menuSelect.value) {
@@ -650,10 +485,11 @@ async function createOrder(event) {
     } else {
         menuSelect.setCustomValidity('');
     }
+
     const menuItemId = formData.get("menuItem");
     const menuItem = await getMenuItem(menuItemId);
     const quantity = formData.get("quantity");
-    console.log(menuItem);
+
     data =
     {
         "MenuItemId": Number(menuItemId),
@@ -669,6 +505,7 @@ async function createOrder(event) {
     showLoader();
     showElementById("new-order-button");
 }
+
 async function deleteOrder(orderId) {
 
     try {
@@ -679,14 +516,7 @@ async function deleteOrder(orderId) {
             },
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
         const responseData = await response.json();
-        console.log(responseData);
-
-
         return responseData;
     } catch (error) {
         alert("Error deleting order.");
@@ -707,18 +537,15 @@ async function deleteOrderDetail(detailId) {
             },
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
         const responseData = await response.json();
-        console.log(responseData);
 
+        //updating order dictionary for consistency
         const deletedDetail = orderDict[orderEditing][1].findIndex(detail => detail.id == detailId);
         orderDict[orderEditing][1].splice(deletedDetail, 1);
 
         return responseData;
-    } catch (error) {
+    }
+    catch (error) {
         alert("Error deleting order detail.");
         return null;
     }
@@ -728,13 +555,11 @@ async function deleteOrderDetail(detailId) {
 }
 function editOrder(event) {
     event.preventDefault();
-    console.log(event);
+
     const orderForm = document.getElementById("order-upper-container");
     const form = new FormData(orderForm);
     const tableId = form.get("table");
-    //const menuItemSelect = document.getElementsByClassName("menuItem");
-    //menuItemSelect.setCustomValidity(''); // Clear any previous validation message
-    console.log(tableId);
+
     const data = {
         id: orderEditing,
         tableId: tableId
@@ -744,6 +569,7 @@ function editOrder(event) {
     showLoader();
     window.location.reload();
 }
+
 //shows the panel for editing an order
 function openEditOrderModel(orderId, tableId) {
     orderEditing = orderId;
@@ -767,10 +593,11 @@ function openEditOrderModel(orderId, tableId) {
     const quantity = document.getElementById("menu-item-quantity").querySelector("input");
     quantity.value = "1";
 }
+
 //shows the panel for editing an order detail
 async function openEditOrderDetailModel(id) {
     const orderDetail = await getOrderDetail(id);
-    console.log(orderDetail);
+
     hideElementById("order-detail-list");
     hideByClassName("order-button");
     showByClassName("order-detail-button");
@@ -801,12 +628,9 @@ async function openEditOrderDetailModel(id) {
     `;
     editOuterContainer.appendChild(editItemContainer);
     loadMenuItems(orderDetail.menuItemId);
-    const menuSelect = document.getElementsByName("menuItem");
-    console.log(orderDetail);
     orderDetailEditing = orderDetail;
-
-
 }
+
 function cancelOrderDetail() {
     showElementById("order-detail-list");
     showByClassName("order-button");
@@ -815,14 +639,9 @@ function cancelOrderDetail() {
     showByClassName("select-container");
     hideElementById("add-menu-item-container");
 
-    //const orderCreateForm = document.getElementById("order-upper-container");
-    //orderCreateForm.reset();
-
     const editOuterContainer = document.getElementById("edit-menu-item-container");
     editOuterContainer.classList.add("hidden");
     editOuterContainer.innerHTML = "";
-
-
 
     const menuSelect = document.getElementById("menu-item-select").querySelector("select");
     menuSelect.value = "";
@@ -830,13 +649,12 @@ function cancelOrderDetail() {
     quantity.value = "1";
 
 }
+
 async function editOrderDetail() {
 
     const menuSelect = document.getElementById("edit-menu-item-select").querySelector("select");
     const quantityInput = document.getElementById("menu-edit-quantity");
 
-    console.log("Selected menuItemId:", menuSelect.value);
-    console.log("Quantity:", quantityInput.value);
     const menu = await getMenuItem(menuSelect?.value);
     const data =
     {
@@ -848,43 +666,36 @@ async function editOrderDetail() {
     }
 
     updateOrderDetail(data);
+
+    //updating order dictionary for consistency
     const updatedDetail = orderDict[orderDetailEditing.orderId][1].findIndex(detail => detail.id == orderDetailEditing.id);
     const olderDetail = orderDict[orderEditing][1].findIndex(detail => detail.id != orderDetailEditing.id && detail.menuItemId == menu.id);
 
-
-
+    //no older items are found with the menu item data is being updated to
     if (olderDetail == -1) {
         orderDict[orderDetailEditing.orderId][1][updatedDetail] = { ...orderDict[orderDetailEditing.orderId][1][updatedDetail], menuItemId: menu.id, menuItem: menu, quantity: data.quantity };
-        console.log("a girişi");
     }
+    //updating the older target menu item's quantity and removing the detail with the older menu item
     else {
         let total = Number(orderDict[orderEditing][1][olderDetail].quantity) + Number(quantityInput.value);
         orderDict[orderEditing][1][olderDetail] = { ...orderDict[orderEditing][1][olderDetail], quantity: total }
         orderDict[orderEditing][1].splice(updatedDetail, 1);
-        console.log("b girişi");
     }
-
 
 
     loadOrderContent(orderDetailEditing.orderId);
     cancelOrderDetail();
-
-
 }
 
-
+//operation confirmations
 function callDeleteOrder(id) {
-    console.log(id);
     const res = confirm("Are you sure to delete?");
     if (res) {
         deleteOrder(id);
     }
-    else {
-        console.log("silmedi");
-    }
 }
+
 function callDeleteOrderDetail(id) {
-    console.log(id);
     const res = confirm("Are you sure to delete?");
     if (res) {
         if (orderDict[orderEditing][1].length == 1) {
@@ -897,9 +708,6 @@ function callDeleteOrderDetail(id) {
             deleteOrderDetail(id);
         }
     }
-    else {
-        console.log("silmedi");
-    }
 }
 
 
@@ -911,17 +719,13 @@ function callUpdateOrderStatus(orderId, _status) {
             status: _status,
             tableId: orderDict[orderId][2]
         };
-        console.log(orderId);
+
         updateOrder(data);
         orderDict[orderId][0] = _status;
         showLoader();
         hideByClassName("order-container-list");
         window.location.reload();
     }
-    else {
-        console.log("silmedi");
-    }
-
 }
 
 const orderCreateForm = document.getElementById("order-upper-container");
