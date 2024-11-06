@@ -34,48 +34,18 @@
                                 <div class="select-container">
                                     <h4 style=" margin:10px 10px 10px 0px">Choose A Menu Item:</h4>
                                     <div id="menu-item-select" class="select-box menu-item-select">
-                                        <!--<select>
-                            <option selected disabled>
-                                Choose A Menu
-                            </option>
-                            <option value="menuItem.id">Mac and cheese</option>
-                            <option value="menuItem.id">Burger</option>
-                        </select>-->
+
                                     </div>
                                 </div>
                                 <div id="menu-item-quantity" class="select-container hidden">
                                     <h4 style=" margin:10px 10px 10px 0px">Choose Quantity:</h4>
                                     <input name="quantity" type="number" class="quantity-input" min="1" max="50" value="1" required />
                                 </div>
-                                <!--<div id="menu-item-price" class="select-container hidden">
-                    <h4 style=" margin:10px 10px 10px 0px">Price:</h4>
-                    <input name="price" type="number" class="quantity-input" value="3.98" disabled />
-                </div>-->
-
                             </div>
                         </div>
                     </div>
                     <div id="edit-menu-item-container"></div>
 
-                    <!--<div class="order">
-        <img id="order-image" src="images/food.png" />
-        <div id="order-detail">
-            <div>Order Name</div>
-            <div>Category Name</div>
-            <div id="price-quantity">
-                <div>Price</div>
-                <div>Quantity</div>
-            </div>
-        </div>
-
-    </div>-->
-                    <!--<div class="order-edit-container">
-        <div></div>
-        <div style="font-size:36px">
-            <i style="color: #DB79A9;" class="bi bi-x-square"></i>
-            <i style="color: #87B6A1;" class="bi bi-check-square"></i>
-        </div>
-    </div>-->
                     <div id="order-detail-list">
 
                     </div>
@@ -84,17 +54,14 @@
                         <button id="modal-submit-button" class="button" type="submit"><i class="bi bi-plus-square"></i>Create Order</button>
                     </div>
                     <div class="order-detail-button hidden">
-                        <button class="button cancel" style="background-color: #DB79A9; border-color: #DB79A9 "type="button" onclick="cancelOrderDetail()"><i class="bi bi-x-square"></i>Cancel</button>
+                        <button class="button cancel" style="background-color: #DB79A9; border-color: #DB79A9 " type="button" onclick="cancelOrderDetail()"><i class="bi bi-x-square"></i>Cancel</button>
                         <button id="modal-submit-button" class="button" type="button" onclick="editOrderDetail()"><i class="bi bi-plus-square"></i>Edit Order Detail</button>
                     </div>
                     <div class="order-detail-add-button hidden">
                         <button class="button cancel" type="button" onclick="cancelOrderDetail()" style="background-color: #DB79A9; border-color: #DB79A9"><i class="bi bi-x-square"></i>Cancel</button>
                         <button id="modal-submit-button" class="button" type="button" onclick="createOrderDetailOnEdit()"><i class="bi bi-plus-square"></i>Add Order Detail</button>
                     </div>
-
-
                 </form>
-
             </div>
         </div>
         <div id="loader-container" class="loader-container hidden">
@@ -121,7 +88,6 @@
                             <div>Quantity</div>
                         </div>
                     </div>
-
                 </div>
                 <div class="order">
                     <img id="order-image" src="images/food.png" />
@@ -133,7 +99,6 @@
                             <div>Quantity</div>
                         </div>
                     </div>
-
                 </div>
                 <div class="order">
                     <img id="order-image" src="images/food.png" />
@@ -145,7 +110,6 @@
                             <div>Quantity</div>
                         </div>
                     </div>
-
                 </div>
                 <div class="order-edit-container">
                     <div>X2 items</div>

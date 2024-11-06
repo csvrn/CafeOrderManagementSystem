@@ -1,7 +1,10 @@
-﻿let orderDetailEditing;
+﻿//tracks which order detail or order is being edited
+let orderDetailEditing;
 let orderEditing;
+//temporary dictionary for orders and order details
 let orderDict = {};
 
+//hide and show functions for the elements
 function showElementById(id) {
     const element = document.getElementById(id);
     element.classList.remove("hidden");
@@ -18,10 +21,6 @@ function hideByClassName(name) {
     const element = document.getElementsByClassName(name)[0];
     element.classList.add("hidden");
 }
-
-
-
-
 function showLoader() {
     showElementById("loader");
     showElementById("loader-container");
@@ -30,8 +29,10 @@ function hideLoader() {
     hideElementById("loader");
     hideElementById("loader-container");
 }
-showLoader();
+//showLoader();
 
+
+//function to load orders and order details
 async function loadOrders() {
     try {
         const orderContainerList = document.getElementsByClassName('order-container-list')[0];
@@ -153,7 +154,7 @@ async function loadOrders() {
 }
 
 
-
+//populates the order details within an order's container
 async function loadOrderContent(orderId) {
     const orderContainerList = document.getElementById('order-detail-list');
     orderContainerList.innerHTML = "";
@@ -248,6 +249,7 @@ async function loadOrderContent(orderId) {
 
 }
 
+//shows the panel for adding order details
 function addOrderDetailOnEdit() {
     console.log("a.");
     hideElementById("order-detail-list");
@@ -262,6 +264,7 @@ function addOrderDetailOnEdit() {
 
 
 }
+//called when create order detail button is clicked
 async function createOrderDetailOnEdit() {
     console.log("a.");
 
@@ -305,6 +308,7 @@ async function createOrderDetailOnEdit() {
 
 
 }
+//populates select element for table records
 async function loadTables() {
     const tableSelect = document.getElementById("table-select");
 
@@ -331,7 +335,7 @@ async function loadTables() {
     }
     tableSelect.appendChild(selectElement);
 }
-
+//populates select element for menu items
 async function loadMenuItems(menuItemId = null) {
     const menuSelectElements = document.getElementsByClassName("menu-item-select");
     const response = await fetch('https://localhost:7238/MenuItem/GetAll');
@@ -381,7 +385,7 @@ async function getOrderDetail(id) {
     return menuItem;
 }
 
-
+//shows the panel for creating an order
 function openModal() {
 
     const editOrderTitle = document.getElementsByClassName("edit-modal-title")[0];
@@ -488,6 +492,7 @@ loadOrders();
 loadTables();
 loadMenuItems();
 
+
 function cancelOrder() {
     console.log("form resetted");
     const orderCreateForm = document.getElementById("order-upper-container");
@@ -592,7 +597,7 @@ function processOrder(event) {
         const menuSelect = document.getElementById("menu-item-select").querySelector("select");
     }
 }
-
+//called when create order button is clicked
 async function createOrder(event) {
     event.preventDefault();
     const formData = new FormData(event.target);
@@ -701,9 +706,10 @@ function editOrder(event) {
     };
     updateOrder(data);
     cancelOrder();
-    showLoader();
+    //showLoader();
     window.location.reload();
 }
+//shows the panel for editing an order
 function openEditOrderModel(orderId, tableId) {
     orderEditing = orderId;
     const editOrderTitle = document.getElementsByClassName("edit-modal-title")[0];
@@ -726,7 +732,7 @@ function openEditOrderModel(orderId, tableId) {
     const quantity = document.getElementById("menu-item-quantity").querySelector("input");
     quantity.value = "1";
 }
-
+//shows the panel for editing an order detail
 async function openEditOrderDetailModel(id) {
     const orderDetail = await getOrderDetail(id);
     console.log(orderDetail);
