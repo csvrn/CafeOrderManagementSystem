@@ -145,6 +145,7 @@ async function loadOrders() {
     }
     catch (error) {
         console.error("Error loading orders:", error);
+        alert("Error loading orders.");
     } finally {
         hideLoader();
     }
@@ -240,7 +241,8 @@ async function loadOrderContent(orderId) {
         }
     }
     catch (error) {
-        console.error("Error loading orders:", error);
+        console.error("Error loading order's content:", error);
+        alert("Error loading order's content.");
     } finally {
         hideLoader();
     }
@@ -310,79 +312,102 @@ async function createOrderDetailOnEdit() {
 }
 //populates select element for table records
 async function loadTables() {
-    const tableSelect = document.getElementById("table-select");
+    try {
+        const tableSelect = document.getElementById("table-select");
 
-    const response = await fetch('https://localhost:7238/Table/GetAll');
-    const tables = await response.json();
-    console.log(tables);
+        const response = await fetch('https://localhost:7238/Table/GetAll');
+        const tables = await response.json();
+        console.log(tables);
 
-    const selectElement = document.createElement("select");
-    selectElement.setAttribute("id", "table-select-select");
-    selectElement.setAttribute("name", "table");
-    selectElement.setAttribute("oninvalid", "this.setCustomValidity('Cannot be left blank.')");
-    selectElement.setAttribute("oninput", "this.setCustomValidity('')");
+        const selectElement = document.createElement("select");
+        selectElement.setAttribute("id", "table-select-select");
+        selectElement.setAttribute("name", "table");
+        selectElement.setAttribute("oninvalid", "this.setCustomValidity('Cannot be left blank.')");
+        selectElement.setAttribute("oninput", "this.setCustomValidity('')");
 
-    selectElement.required = true;
-    selectElement.innerHTML = '<option disabled selected value=""  >Choose a table</option>';
+        selectElement.required = true;
+        selectElement.innerHTML = '<option disabled selected value=""  >Choose a table</option>';
 
-    for (const table of tables) {
-        console.log(table);
-        const optionElement = document.createElement("option");
-        optionElement.setAttribute("value", table.id);
-        optionElement.setAttribute("id", "menu-select-option");
-        optionElement.innerText = `Table ${table.number}`;
-        selectElement.appendChild(optionElement);
+        for (const table of tables) {
+            console.log(table);
+            const optionElement = document.createElement("option");
+            optionElement.setAttribute("value", table.id);
+            optionElement.setAttribute("id", "menu-select-option");
+            optionElement.innerText = `Table ${table.number}`;
+            selectElement.appendChild(optionElement);
+        }
+        tableSelect.appendChild(selectElement);
     }
-    tableSelect.appendChild(selectElement);
+    catch (error) {
+        console.log("Error loading tables: ", error);
+        alert("Error loading tables.");
+    }
+
 }
 //populates select element for menu items
 async function loadMenuItems(menuItemId = null) {
-    const menuSelectElements = document.getElementsByClassName("menu-item-select");
-    const response = await fetch('https://localhost:7238/MenuItem/GetAll');
-    const menus = await response.json();
-    console.log(menus);
-    for (const menuSelect of menuSelectElements) {
-        console.log(menuSelect);
-        menuSelect.innerHTML = "";
-        const selectElement = document.createElement("select");
-        selectElement.setAttribute("name", "menuItem");
-        //selectElement.required = true;
-        selectElement.setAttribute("oninvalid", "this.setCustomValidity('Cannot be left blank.')");
-        selectElement.setAttribute("oninput", "this.setCustomValidity('')");
-        selectElement.setAttribute("onchange", "showElementById('menu-item-quantity')");
-        selectElement.innerHTML = `<option disabled ${menuItemId ? "" : "selected"} value="">Choose a menu</option>`;
-        for (const item of menus) {
-            console.log(item);
-            const optionElement = document.createElement("option");
-            optionElement.setAttribute("value", item.id);
-            optionElement.innerText = item.name;
-            if (menuItemId != null && item.id == menuItemId) {
-                console.log("matched: ", menuItemId);
-                optionElement.setAttribute("selected", "selected");
+    try {
+        const menuSelectElements = document.getElementsByClassName("menu-item-select");
+        const response = await fetch('https://localhost:7238/MenuItem/GetAll');
+        const menus = await response.json();
+        console.log(menus);
+        for (const menuSelect of menuSelectElements) {
+            console.log(menuSelect);
+            menuSelect.innerHTML = "";
+            const selectElement = document.createElement("select");
+            selectElement.setAttribute("name", "menuItem");
+            //selectElement.required = true;
+            selectElement.setAttribute("oninvalid", "this.setCustomValidity('Cannot be left blank.')");
+            selectElement.setAttribute("oninput", "this.setCustomValidity('')");
+            selectElement.setAttribute("onchange", "showElementById('menu-item-quantity')");
+            selectElement.innerHTML = `<option disabled ${menuItemId ? "" : "selected"} value="">Choose a menu</option>`;
+            for (const item of menus) {
+                console.log(item);
+                const optionElement = document.createElement("option");
+                optionElement.setAttribute("value", item.id);
+                optionElement.innerText = item.name;
+                if (menuItemId != null && item.id == menuItemId) {
+                    console.log("matched: ", menuItemId);
+                    optionElement.setAttribute("selected", "selected");
+                }
+                console.log(item.id);
+                selectElement.appendChild(optionElement);
             }
-            console.log(item.id);
-            selectElement.appendChild(optionElement);
+            menuSelect.appendChild(selectElement);
+            console.log(selectElement);
+            console.log(menuSelect);
         }
-        menuSelect.appendChild(selectElement);
-        console.log(selectElement);
-        console.log(menuSelect);
 
+    }
+    catch (error) {
+        console.log("Error loading menu items: ", error);
+        alert("Error loading menu items.");
     }
 }
 
 
 async function getMenuItem(id) {
-    const response = await fetch(`https://localhost:7238/MenuItem/Get/${id}`);
-    const menuItem = await response.json();
-    console.log(menuItem);
-    return menuItem;
+    try {
+        const response = await fetch(`https://localhost:7238/MenuItem/Get/${id}`);
+        const menuItem = await response.json();
+        console.log(menuItem);
+        return menuItem;
+    }
+    catch (error) {
+        alert("Error getting menu item.")
+    }
 }
 
 async function getOrderDetail(id) {
-    const response = await fetch(`https://localhost:7238/OrderDetail/GetNested/${id}`);
-    const menuItem = await response.json();
-    console.log(menuItem);
-    return menuItem;
+    try {
+        const response = await fetch(`https://localhost:7238/OrderDetail/GetNested/${id}`);
+        const menuItem = await response.json();
+        console.log(menuItem);
+        return menuItem;
+    }
+    catch (error) {
+        alert("Error getting order detail.")
+    }
 }
 
 //shows the panel for creating an order
@@ -527,7 +552,8 @@ async function postOrder(data) {
 
         return responseData.orderId;
     } catch (error) {
-        console.error("Error posting order:", error);
+        //console.error("Error posting order:", error);
+        alert("Error posting order.");
         return null;
     }
 }
@@ -552,7 +578,7 @@ async function postOrderDetail(data) {
 
         return responseData.orderDetailId;
     } catch (error) {
-        console.error("Error posting order detail:", error);
+        alert("Error posting order detail.");
         return null;
     }
 }
@@ -560,31 +586,40 @@ async function postOrderDetail(data) {
 
 
 function updateOrder(data) {
-    const response = fetch('https://localhost:7238/Order/Update', {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    })
-        .then(response => response.json())
-        .then(data => console.log(data))
-        .catch(error => console.error(error));
-    return data;
+    try {
+        const response = fetch('https://localhost:7238/Order/Update', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error(error));
+        return data;
+    } catch (error) {
+        alert("Error updating order.");
+    }
 }
 
 function updateOrderDetail(data) {
-    const response = fetch('https://localhost:7238/OrderDetail/Update', {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    })
-        .then(response => response.json())
-        .then(data => console.log(data))
-        .catch(error => console.error(error));
-    return data;
+    try {
+
+        const response = fetch('https://localhost:7238/OrderDetail/Update', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error(error));
+        return data;
+    } catch (error) {
+        alert("Error updating order detail.");
+    }
 }
 
 function processOrder(event) {
@@ -654,7 +689,7 @@ async function deleteOrder(orderId) {
 
         return responseData;
     } catch (error) {
-        console.error("Error posting order detail:", error);
+        alert("Error deleting order.");
         return null;
     }
     finally {
@@ -684,7 +719,7 @@ async function deleteOrderDetail(detailId) {
 
         return responseData;
     } catch (error) {
-        console.error("Error posting order detail:", error);
+        alert("Error deleting order detail.");
         return null;
     }
     finally {
@@ -788,7 +823,7 @@ function cancelOrderDetail() {
     editOuterContainer.innerHTML = "";
 
 
-  
+
     const menuSelect = document.getElementById("menu-item-select").querySelector("select");
     menuSelect.value = "";
     const quantity = document.getElementById("menu-item-quantity").querySelector("input");
