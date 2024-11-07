@@ -9,9 +9,11 @@ namespace CafeOrderManagement.Controllers
 	public class OrderController : ControllerBase
 	{
 		private readonly IOrderRepository _orderRepo;
-		public OrderController(IOrderRepository orderRepo)
+		private readonly ITableRepository _tableRepository;
+		public OrderController(IOrderRepository orderRepo, ITableRepository tableRepository)
 		{
 			_orderRepo = orderRepo;
+			_tableRepository = tableRepository;
 		}
 		[HttpGet]
 		public IActionResult GetAll()
@@ -41,6 +43,12 @@ namespace CafeOrderManagement.Controllers
 				{
 					_orderRepo.Add(order);
 					_orderRepo.Save();
+
+					Table table = _tableRepository.Get(u=>u.Id == order.TableId);
+					table.Status = Table.TableStatus.Occupied;
+					_tableRepository.Update(table);
+					_tableRepository.Save();
+
 					return Ok(new { success = true, message = "Order created successfully.", orderId = order.Id });
 				}
 				catch (Exception exception)
