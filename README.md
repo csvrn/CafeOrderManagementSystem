@@ -11,6 +11,7 @@ You can access UML diagram, SQL scripts, and API requests from the documents fol
 1. Project Structure
 1. Prerequisites
 1. Project Setup
+2. Additional Information
 
 ## 1. Project Structure:
 
@@ -149,3 +150,8 @@ You can install SQL Server and preferably Microsoft SQL Server Management Studio
 8. Run `update-database` again to apply your initial migration. You can view the changes by refreshing your database now.
 
 9. You can run the project. (In case your browser's internet security settings cause trouble, try accessing the address from incognito mode. **Do not close the first browser window that opens when the project runs**, that causes the project to stop running assuming you have closed the application.)
+
+## 4. Additional Information:
+- If you would like to use MySQL instead of SQL Server, you can view this link: [MySQL connection in .NET Core 8 MVC](https://medium.com/@Mohammed_Taherali/mysql-connection-in-net-core-8-mvc-86c71c3613fd)
+- If you would like to use Oracle instead of SQL Server, you can view this link: [Getting started with ASP.NET Core Web Application using Oracle](https://github.com/mahedee/articles/blob/master/dot-net-core/Getting-started-with-ASPNET-Core-Web-Application-using-Oracle.md).
+ 
